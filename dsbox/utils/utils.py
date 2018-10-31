@@ -2,23 +2,44 @@ import gzip
 import pickle
 
 
-def get_downstream_list(task, task_list, level=0):
-    task_list.append(task)
-    level += 1
-    for t in task.upstream_list:
-        get_downstream_list(t, task_list, level)
+def breadth_first_search_task_list(task_root):
+    task_list = []
+    queue = [task_root]
+
+    while len(queue) > 0:
+        task = queue.pop(0)
+        task_list.append(task)
+        next_tasks = task.downstream_list
+        for next_task in next_tasks:
+            if next_task not in queue and next_task not in task_list:
+                queue.append(next_task)
+
+    return task_list
+
+
+def get_dag_roots(dag):
+    roots = []
+    for task in dag.tasks:
+        if len(task.upstream_list) == 0:
+            roots.append(task)
+
+    return roots
 
 
 def execute_dag(dag, verbose=False):
     task_list = []
-    for t in dag.roots:
-        get_downstream_list(t, task_list)
+    roots = get_dag_roots(dag)
 
-    task_list.reverse()
+    for root in roots:
+        sub_task_list = breadth_first_search_task_list(root)
+        task_list += sub_task_list
+
     for task in task_list:
         if verbose:
             print(str(task))
         task.execute(dag.get_template_env())
+
+    return task_list
 
 
 def pickle_compress(model):
