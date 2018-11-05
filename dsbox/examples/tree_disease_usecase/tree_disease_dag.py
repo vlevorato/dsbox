@@ -15,7 +15,7 @@ engine = create_engine('sqlite:///tree_disease.db', echo=False)
 def dummy_function(dataframe):
     return dataframe
 
-features_selection = ['ADR_SECTEUR', 'coord_x', 'coord_y']
+features_selection = ['ADR_SECTEUR', 'ANNEEDEPLANTATION', 'coord_x', 'coord_y']
 feature_target = 'Default'
 prediction_column_name = 'y_prediction'
 
@@ -86,7 +86,7 @@ task_export_to_sqlite = DataOperator(operation_function=dummy_function,
 
 task_model_predict.set_downstream(task_export_to_sqlite)
 
-dag.tree_view()
+#dag.tree_view()
 print()
 
 execute_dag(dag, verbose=True)

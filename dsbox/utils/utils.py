@@ -2,19 +2,23 @@ import gzip
 import pickle
 
 
-def breadth_first_search_task_list(task_root):
-    task_list = []
+def breadth_first_search_task_list(task_root, task_list=[], mode='upstream'):
+    sub_task_list = []
     queue = [task_root]
 
     while len(queue) > 0:
         task = queue.pop(0)
-        task_list.append(task)
-        next_tasks = task.downstream_list
+        sub_task_list.append(task)
+        next_tasks = None
+        if mode == 'upstream':
+            next_tasks = task.upstream_list
+        else:
+            next_tasks = task.downstream_list
         for next_task in next_tasks:
-            if next_task not in queue and next_task not in task_list:
+            if next_task not in queue and next_task not in task_list and next_task not in sub_task_list:
                 queue.append(next_task)
 
-    return task_list
+    return sub_task_list
 
 
 def get_dag_roots(dag):
@@ -28,11 +32,14 @@ def get_dag_roots(dag):
 
 def execute_dag(dag, verbose=False):
     task_list = []
-    roots = get_dag_roots(dag)
+    #roots = get_dag_roots(dag)
+    roots = dag.roots
 
     for root in roots:
-        sub_task_list = breadth_first_search_task_list(root)
-        task_list += sub_task_list
+        sub_task_list = breadth_first_search_task_list(root, task_list)
+        task_list = sub_task_list + task_list
+
+    task_list.reverse()
 
     for task in task_list:
         if verbose:
