@@ -1,36 +1,57 @@
 from datetime import datetime
+import os
 
 from airflow import DAG
+from airflow.operators.bash_operator import BashOperator
 
-from dsbox.examples.tree_disease_usecase.ml.feature_engineering import join_dataframes
+from dsbox.examples.tree_disease_usecase.ml.feature_engineering import join_dataframes, fillna_columns
 from dsbox.examples.tree_disease_usecase.ml.modeling import fit_write_model, read_predict_model, model_performance
 from dsbox.operators.data_operator import DataOperator
 from dsbox.operators.data_unit import DataInputFileUnit, DataOutputFileUnit, DataInputMultiFileUnit
-from dsbox.utils import execute_dag
+from dsbox.utils import execute_dag, plot_dag
+from dsbox.utils import FilenameGenerator
 
 from sqlalchemy import create_engine
+
 engine = create_engine('sqlite:///tree_disease.db', echo=False)
+
+data_path = os.getenv('DATA_PATH')
 
 
 def dummy_function(dataframe):
     return dataframe
 
-features_selection = ['ADR_SECTEUR', 'ANNEEDEPLANTATION', 'coord_x', 'coord_y']
+
+features_selection = ['ADR_SECTEUR', 'ANNEEDEPLANTATION', 'coord_x', 'coord_y', ]
+                      #'ANNEEREALISATIONDIAGNOSTIC',
+                      #'ANNEETRAVAUXPRECONISESDIAG']
 feature_target = 'Default'
 prediction_column_name = 'y_prediction'
+
+filename_generator = FilenameGenerator(path='datasets/temp/')
+temp_files = []
+for i in range(0, 100):
+    temp_files.append(filename_generator.generate_filename() + '.parquet')
 
 dag = DAG(dag_id='Tree_Disease_Prediction', start_date=datetime.now())
 
 input_csv_files_unit = DataInputMultiFileUnit(['datasets/input/X_tree_egc_t1.csv',
                                                'datasets/input/X_geoloc_egc_t1.csv',
                                                'datasets/input/Y_tree_egc_t1.csv'], sep=';')
-output_parquet_unit = DataOutputFileUnit('datasets/temp/X_raw.parquet', pandas_write_function_name='to_parquet')
+output_parquet_unit = DataOutputFileUnit(temp_files[0], pandas_write_function_name='to_parquet')
 task_concate_train_files = DataOperator(operation_function=join_dataframes,
                                         input_unit=input_csv_files_unit,
                                         output_unit=output_parquet_unit,
-                                        dag=dag, task_id='Concatenate_train_data_source_files')
+                                        dag=dag, task_id='Join_train_data_source_files')
 
-input_parquet_raw_file_unit = DataInputFileUnit('datasets/temp/X_raw.parquet', pandas_read_function_name='read_parquet')
+task_fillna = DataOperator(operation_function=fillna_columns,
+                           input_unit=DataInputFileUnit(temp_files[0], pandas_read_function_name='read_parquet'),
+                           output_unit=DataOutputFileUnit(temp_files[1], pandas_write_function_name='to_parquet'),
+                           dag=dag, task_id='Fill_NA_values')
+
+task_concate_train_files.set_downstream(task_fillna)
+
+input_parquet_raw_file_unit = DataInputFileUnit(temp_files[1], pandas_read_function_name='read_parquet')
 task_model_learning = DataOperator(operation_function=fit_write_model,
                                    params={'columns_selection': features_selection,
                                            'column_target': feature_target,
@@ -39,18 +60,18 @@ task_model_learning = DataOperator(operation_function=fit_write_model,
                                    input_unit=input_parquet_raw_file_unit,
                                    dag=dag, task_id='Model_learning')
 
-task_concate_train_files.set_downstream(task_model_learning)
+task_fillna.set_downstream(task_model_learning)
 
 input_csv_files_unit = DataInputMultiFileUnit(['datasets/input/X_tree_egc_t2.csv',
                                                'datasets/input/X_geoloc_egc_t2.csv',
                                                'datasets/input/Y_tree_egc_t2.csv'], sep=';')
-output_parquet_unit = DataOutputFileUnit('datasets/temp/X_test.parquet', pandas_write_function_name='to_parquet')
+output_parquet_unit = DataOutputFileUnit(temp_files[50], pandas_write_function_name='to_parquet')
 task_concate_test_files = DataOperator(operation_function=join_dataframes,
                                        input_unit=input_csv_files_unit,
                                        output_unit=output_parquet_unit,
-                                       dag=dag, task_id='Concatenate_test_data_source_files')
+                                       dag=dag, task_id='Join_test_data_source_files')
 
-input_parquet_raw_file_unit = DataInputFileUnit('datasets/temp/X_test.parquet',
+input_parquet_raw_file_unit = DataInputFileUnit(temp_files[50],
                                                 pandas_read_function_name='read_parquet')
 output_result_unit = DataOutputFileUnit('datasets/output/X_predict.csv', pandas_write_function_name='to_csv',
                                         index=False)
@@ -80,13 +101,20 @@ output_result_unit = DataOutputFileUnit('predictions', pandas_write_function_nam
                                         con=engine,
                                         if_exists='replace')
 task_export_to_sqlite = DataOperator(operation_function=dummy_function,
-                                 input_unit=input_result_file_unit,
-                                 output_unit=output_result_unit,
-                                 dag=dag, task_id='Export_result_to_sqlite')
+                                     input_unit=input_result_file_unit,
+                                     output_unit=output_result_unit,
+                                     dag=dag, task_id='Export_result_to_sqlite')
 
 task_model_predict.set_downstream(task_export_to_sqlite)
 
-#dag.tree_view()
+task_purge_temp_files = BashOperator(task_id='Purge_temp_files',
+                                     bash_command='rm ' + data_path + 'temp/*',
+                                     dag=dag)
+
+task_export_to_sqlite.set_downstream(task_purge_temp_files)
+
+# dag.tree_view()
+plot_dag(dag)
 print()
 
 execute_dag(dag, verbose=True)

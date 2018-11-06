@@ -1,5 +1,7 @@
 import gzip
 import pickle
+import networkx as nx
+import matplotlib.pyplot as plt
 
 
 def breadth_first_search_task_list(task_root, task_list=[], mode='upstream'):
@@ -21,6 +23,27 @@ def breadth_first_search_task_list(task_root, task_list=[], mode='upstream'):
     return sub_task_list
 
 
+def breadth_first_search_shell_list(task_roots):
+    shell_task_list = [task_roots]
+    done_tasks = set()
+    queue = task_roots
+
+    while len(queue) > 0:
+        tasks = queue
+        next_tasks = []
+        for task in tasks:
+            for next_task in task.downstream_list:
+                if next_task not in done_tasks:
+                    next_tasks.append(next_task)
+                    done_tasks.add(next_task)
+
+        if len(next_tasks) > 0:
+            shell_task_list.append(next_tasks)
+        queue = next_tasks
+
+    return shell_task_list
+
+
 def get_dag_roots(dag):
     roots = []
     for task in dag.tasks:
@@ -32,7 +55,6 @@ def get_dag_roots(dag):
 
 def execute_dag(dag, verbose=False):
     task_list = []
-    #roots = get_dag_roots(dag)
     roots = dag.roots
 
     for root in roots:
@@ -47,6 +69,31 @@ def execute_dag(dag, verbose=False):
         task.execute(dag.get_template_env())
 
     return task_list
+
+
+def plot_dag(dag):
+    fig, ax = plt.subplots(figsize=(15, 10), dpi=150)
+
+    G = nx.DiGraph()
+    color_list = []
+
+    for task in dag.tasks:
+        if len(task.downstream_list) > 0:
+            for next_task in task.downstream_list:
+                G.add_edge(task, next_task)
+
+    for node in G.nodes():
+        color_list.append(node.ui_color)
+
+    pos = nx.drawing.nx_agraph.graphviz_layout(G, prog='dot')
+    nx.draw_networkx_nodes(G, pos, node_shape='D', node_color=color_list)
+    nx.draw_networkx_edges(G, pos, edge_color='gray', alpha=0.8)
+
+    nx.draw_networkx_labels(G, pos, font_size=5)
+
+    ax.set_axis_off()
+    plt.title("DAG preview", fontsize=8)
+    plt.show()
 
 
 def pickle_compress(model):
