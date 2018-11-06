@@ -65,8 +65,11 @@ def execute_dag(dag, verbose=False):
 
     for task in task_list:
         if verbose:
-            print(str(task))
-        task.execute(dag.get_template_env())
+            print(dag.dag_id+'-'+str(task))
+        if task.task_type == 'SubDagOperator':
+            execute_dag(task.subdag, verbose=verbose)
+        else:
+            task.execute(dag.get_template_env())
 
     return task_list
 
@@ -83,7 +86,11 @@ def plot_dag(dag):
                 G.add_edge(task, next_task)
 
     for node in G.nodes():
-        color_list.append(node.ui_color)
+        if len(node.ui_color) == 7:
+            color_list.append(node.ui_color)
+        else:
+            last_code = node.ui_color[-1]
+            color_list.append(str(node.ui_color).ljust(7, last_code))
 
     pos = nx.drawing.nx_agraph.graphviz_layout(G, prog='dot')
     nx.draw_networkx_nodes(G, pos, node_shape='D', node_color=color_list)
