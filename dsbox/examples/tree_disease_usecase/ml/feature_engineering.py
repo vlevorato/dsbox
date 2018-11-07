@@ -1,6 +1,8 @@
 import numpy as np
+import pandas as pd
 from sklearn.impute import SimpleImputer
 
+from dsbox.ml.feature_engineering import TagEncoder
 from dsbox.utils import write_model_file, load_model_file
 
 
@@ -10,6 +12,17 @@ def join_dataframes(dataframe_list):
         X = X.join(dataframe)
 
     return X
+
+
+def dict_missing_feature(dataframe, missing_values_feature, groupby_feature, dummy_feature):
+    df = dataframe.groupby([groupby_feature, missing_values_feature])[[dummy_feature]].count().reset_index(drop=False)
+    df.columns = [groupby_feature, missing_values_feature, 'count']
+    df_count = df.groupby(groupby_feature)[['count']].max().reset_index(drop=False)
+    df = df.merge(df_count, on=[groupby_feature, 'count'])
+    mapping_dict = df[[groupby_feature, missing_values_feature]].set_index(groupby_feature).to_dict()[
+        missing_values_feature]
+
+    return mapping_dict
 
 
 def fillna_columns(dataframe, mode='train', model_path=None):
@@ -26,5 +39,46 @@ def fillna_columns(dataframe, mode='train', model_path=None):
     X['ANNEEREALISATIONDIAGNOSTIC'] = np.round(X['ANNEEREALISATIONDIAGNOSTIC']).astype('int')
 
     X['ANNEETRAVAUXPRECONISESDIAG'] = X['ANNEETRAVAUXPRECONISESDIAG'].fillna(-1)
+
+    miss_group_features = [('ESPECE', 'GENRE_BOTA'),
+                           ('DIAMETREARBREAUNMETRE', 'ESPECE')
+                           ]
+    for tuple in miss_group_features:
+
+        missing_feature = tuple[0]
+        grouping_feature = tuple[1]
+
+        if mode == 'train':
+            mapping_dict = dict_missing_feature(X, missing_feature, grouping_feature, 'CODE')
+            write_model_file(model_path + 'mapping_dict_' + missing_feature + '.feat', mapping_dict)
+        else:
+            mapping_dict = load_model_file(model_path + 'mapping_dict_' + missing_feature + '.feat')
+
+        grouping_feature_values = X[grouping_feature].unique()
+        for grouping_feature_value in grouping_feature_values:
+            if grouping_feature_value not in mapping_dict:
+                mapping_dict[grouping_feature_value] = 'inconnu'
+
+        X[missing_feature] = X.apply(
+            lambda row: mapping_dict[row[grouping_feature]] if pd.isnull(row[missing_feature]) else row[
+                missing_feature], axis=1)
+
+    return X
+
+
+def category_to_numerical_features(dataframe, features, mode='train', model_path=None):
+    X = dataframe
+
+    for feature in features:
+        if mode == 'train':
+            tagencoder = TagEncoder()
+            X[feature] = tagencoder.fit_transform(X[feature])
+            write_model_file(model_path + 'tagencoder_' + feature + '.feat', tagencoder)
+        else:
+            tagencoder = load_model_file(model_path + 'tagencoder_' + feature + '.feat')
+            X[feature] = tagencoder.transform(X[feature])
+
+    X['DIAMETREARBREAUNMETRE'] = X['DIAMETREARBREAUNMETRE'].map(lambda x: '-1' if x == 'inconnu' else x)
+    X['DIAMETREARBREAUNMETRE'] = X['DIAMETREARBREAUNMETRE'].map(lambda x: x.split(' ')[0]).astype('int')
 
     return X

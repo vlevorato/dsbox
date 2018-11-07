@@ -25,7 +25,8 @@ def dummy_function(dataframe):
 
 
 features_selection = ['ADR_SECTEUR', 'ANNEEDEPLANTATION', 'coord_x', 'coord_y',
-                      'ANNEEREALISATIONDIAGNOSTIC', 'ANNEETRAVAUXPRECONISESDIAG']
+                      'ANNEEREALISATIONDIAGNOSTIC', 'ANNEETRAVAUXPRECONISESDIAG',
+                      'GENRE_BOTA', 'ESPECE', 'DIAMETREARBREAUNMETRE']
 
 feature_target = 'Default'
 prediction_column_name = 'y_prediction'
@@ -138,7 +139,7 @@ task_purge_temp_files = BashOperator(task_id='Purge_temp_files',
 task_export_to_sqlite.set_downstream(task_purge_temp_files)
 
 # dag.tree_view()
-plot_dag(dag)
+#plot_dag(dag)
 print()
 
 execute_dag(dag, verbose=True)
