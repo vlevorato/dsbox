@@ -20,10 +20,20 @@ def feature_engineering_sub_dag(parent_dag_name, child_dag_name, temp_data_path,
 
     task_fillna = DataOperator(operation_function=fillna_columns,
                                input_unit=DataInputFileUnit(input_file, pandas_read_function_name='read_parquet'),
-                               output_unit=DataOutputFileUnit(output_file, pandas_write_function_name='to_parquet'),
+                               output_unit=DataOutputFileUnit(temp_files[0], pandas_write_function_name='to_parquet'),
                                dag=dag, task_id='Fill_NA_values',
                                params={'model_path': model_path,
                                        'mode': mode}
                                )
+
+    task_cat_to_num = DataOperator(operation_function=fillna_columns,
+                               input_unit=DataInputFileUnit(temp_files[0], pandas_read_function_name='read_parquet'),
+                               output_unit=DataOutputFileUnit(output_file, pandas_write_function_name='to_parquet'),
+                               dag=dag, task_id='Categorical_features_to_numeric',
+                               params={'model_path': model_path,
+                                       'mode': mode}
+                               )
+
+    task_fillna.set_downstream(task_cat_to_num)
 
     return dag
