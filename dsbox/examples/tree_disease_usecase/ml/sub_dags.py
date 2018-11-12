@@ -3,16 +3,12 @@ from airflow import DAG
 from dsbox.examples.tree_disease_usecase.ml.feature_engineering import fillna_columns, category_to_numerical_features
 from dsbox.operators.data_operator import DataOperator
 from dsbox.operators.data_unit import DataInputFileUnit, DataOutputFileUnit
-from dsbox.utils import FilenameGenerator
 
 
-def feature_engineering_sub_dag(parent_dag_name, child_dag_name, temp_data_path, model_path, input_file, output_file,
-                                start_date,
+def feature_engineering_sub_dag(parent_dag_name, child_dag_name, model_path, input_file, output_file,
+                                temp_files, start_date,
                                 schedule_interval, mode='train'):
-    filename_generator = FilenameGenerator(path=temp_data_path)
-    temp_files = []
-    for i in range(0, 100):
-        temp_files.append(filename_generator.generate_filename() + '.parquet')
+
 
     dag = DAG('%s.%s' % (parent_dag_name, child_dag_name),
               schedule_interval=schedule_interval,

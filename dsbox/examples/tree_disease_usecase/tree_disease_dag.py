@@ -5,7 +5,7 @@ from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.subdag_operator import SubDagOperator
 
-from dsbox.examples.tree_disease_usecase.ml.feature_engineering import join_dataframes, fillna_columns
+from dsbox.examples.tree_disease_usecase.ml.feature_engineering import join_dataframes
 from dsbox.examples.tree_disease_usecase.ml.modeling import fit_write_model, read_predict_model, model_performance
 from dsbox.examples.tree_disease_usecase.ml.sub_dags import feature_engineering_sub_dag
 from dsbox.operators.data_operator import DataOperator
@@ -53,10 +53,10 @@ task_concate_train_files = DataOperator(operation_function=join_dataframes,
 
 task_feature_engineering_for_train = SubDagOperator(
     subdag=feature_engineering_sub_dag(dag.dag_id, 'Feature_engineering_for_train',
-                                       temp_data_path=project_path + 'datasets/temp/',
                                        model_path=project_path + 'models/',
                                        input_file=project_path + 'datasets/temp/X_train_raw.parquet',
                                        output_file=project_path + 'datasets/temp/X_train_final.parquet',
+                                       temp_files=temp_files[0:10],
                                        start_date=dag.start_date,
                                        schedule_interval=dag.schedule_interval),
     task_id='Feature_engineering_for_train',
@@ -88,10 +88,10 @@ task_concate_test_files = DataOperator(operation_function=join_dataframes,
 
 task_feature_engineering_for_test = SubDagOperator(
     subdag=feature_engineering_sub_dag(dag.dag_id, 'Feature_engineering_for_test',
-                                       temp_data_path=project_path + 'datasets/temp/',
                                        model_path=project_path + 'models/',
                                        input_file=project_path + 'datasets/temp/X_test_raw.parquet',
                                        output_file=project_path + 'datasets/temp/X_test_final.parquet',
+                                       temp_files=temp_files[10:],
                                        start_date=dag.start_date,
                                        schedule_interval=dag.schedule_interval,
                                        mode='predict'),
@@ -144,4 +144,4 @@ task_export_to_sqlite.set_downstream(task_purge_temp_files)
 
 # for local execution
 # plot_dag(dag)
-# execute_dag(dag, verbose=True)
+execute_dag(dag, verbose=True)
