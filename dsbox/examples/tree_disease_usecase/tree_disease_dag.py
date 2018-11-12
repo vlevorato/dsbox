@@ -144,4 +144,4 @@ task_export_to_sqlite.set_downstream(task_purge_temp_files)
 
 # for local execution
 # plot_dag(dag)
-execute_dag(dag, verbose=True)
+#execute_dag(dag, verbose=True)
