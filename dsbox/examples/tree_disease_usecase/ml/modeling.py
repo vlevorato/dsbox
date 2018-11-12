@@ -1,10 +1,13 @@
-from sklearn.metrics import f1_score
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import f1_score, accuracy_score
+from sklearn.ensemble import RandomForestClassifier
 
 from dsbox.utils import write_model_file, load_model_file
 
+def generate_model():
 
-def fit_write_model(dataframe, columns_selection, column_target, write_path, model=DecisionTreeClassifier):
+    return RandomForestClassifier(n_estimators=100, n_jobs=-1)
+
+def fit_write_model(dataframe, columns_selection, column_target, write_path, model=generate_model):
     X = dataframe[columns_selection]
     y = dataframe[column_target]
 
@@ -25,4 +28,5 @@ def read_predict_model(dataframe, columns_selection, read_path, y_pred_column_na
 
 
 def model_performance(dataframe, y_true_column_name, y_pred_column_name):
+    print("Accuracy: " + str(accuracy_score(dataframe[y_true_column_name], dataframe[y_pred_column_name])))
     print("F-score: " + str(f1_score(dataframe[y_true_column_name], dataframe[y_pred_column_name])))

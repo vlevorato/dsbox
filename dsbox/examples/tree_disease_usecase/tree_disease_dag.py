@@ -26,7 +26,11 @@ def dummy_function(dataframe):
 
 features_selection = ['ADR_SECTEUR', 'ANNEEDEPLANTATION', 'coord_x', 'coord_y',
                       'ANNEEREALISATIONDIAGNOSTIC', 'ANNEETRAVAUXPRECONISESDIAG',
-                      'GENRE_BOTA', 'ESPECE', 'DIAMETREARBREAUNMETRE']
+                      'GENRE_BOTA', 'ESPECE', 'DIAMETREARBREAUNMETRE', 'FREQUENTATIONCIBLE',
+                      'NOTEDIAGNOSTIC', 'PRIORITEDERENOUVELLEMENT', 'RAISONDEPLANTATION', 'REMARQUES',
+                      'SOUS_CATEGORIE', 'STADEDEDEVELOPPEMENT', 'STADEDEVELOPPEMENTDIAG',
+                      'TRAITEMENTCHENILLES', 'TRAVAUXPRECONISESDIAG', 'TROTTOIR',
+                      'VARIETE', 'VIGUEUR', 'CODE_PARENT']
 
 feature_target = 'Default'
 prediction_column_name = 'y_prediction'
@@ -66,7 +70,7 @@ input_parquet_raw_file_unit = DataInputFileUnit('datasets/temp/X_train_final.par
 task_model_learning = DataOperator(operation_function=fit_write_model,
                                    params={'columns_selection': features_selection,
                                            'column_target': feature_target,
-                                           'write_path': 'models/tree.model'
+                                           'write_path': 'models/ensemble.model'
                                            },
                                    input_unit=input_parquet_raw_file_unit,
                                    dag=dag, task_id='Model_learning')
@@ -99,7 +103,7 @@ task_concate_test_files.set_downstream(task_feature_engineering_for_test)
 
 task_model_predict = DataOperator(operation_function=read_predict_model,
                                   params={'columns_selection': features_selection,
-                                          'read_path': 'models/tree.model',
+                                          'read_path': 'models/ensemble.model',
                                           'y_pred_column_name': prediction_column_name
                                           },
                                   input_unit=DataInputFileUnit('datasets/temp/X_test_final.parquet',
@@ -138,8 +142,7 @@ task_purge_temp_files = BashOperator(task_id='Purge_temp_files',
 
 task_export_to_sqlite.set_downstream(task_purge_temp_files)
 
-# dag.tree_view()
-#plot_dag(dag)
+plot_dag(dag)
 print()
 
 execute_dag(dag, verbose=True)

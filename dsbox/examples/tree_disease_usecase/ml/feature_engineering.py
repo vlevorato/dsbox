@@ -25,7 +25,47 @@ def dict_missing_feature(dataframe, missing_values_feature, groupby_feature, dum
     return mapping_dict
 
 
-def fillna_columns(dataframe, mode='train', model_path=None):
+def notediag_to_num(text):
+
+    if text == "Arbre d'avenir normal":
+        return 0
+    if text == "Arbre d'avenir incertain":
+        return 1
+    if "dans les 10 ans" in text:
+        return 2
+    if "dans les 5 ans" in text:
+        return 3
+    if "diatement" in text:
+        return 4
+
+    return -1
+
+
+def prio_renouv_to_num(text):
+
+    if text == "plus de 20 ans":
+        return 20
+    if "de 11" in text:
+        return 11
+    if "de 6" in text:
+        return 6
+    if "de 1 " in text:
+        return 1
+
+    return -1
+
+
+def remarques_to_num(text):
+
+    if pd.isnull(text) or text == '0':
+        return 0
+
+    if "mort" in text:
+        return 2
+
+    return 1
+
+def fillna_columns(dataframe, simple_features=[], mode='train', model_path=None):
     X = dataframe
 
     if mode == 'train':
@@ -41,7 +81,8 @@ def fillna_columns(dataframe, mode='train', model_path=None):
     X['ANNEETRAVAUXPRECONISESDIAG'] = X['ANNEETRAVAUXPRECONISESDIAG'].fillna(-1)
 
     miss_group_features = [('ESPECE', 'GENRE_BOTA'),
-                           ('DIAMETREARBREAUNMETRE', 'ESPECE')
+                           ('DIAMETREARBREAUNMETRE', 'ESPECE'),
+                           ('VARIETE', 'ESPECE')
                            ]
     for tuple in miss_group_features:
 
@@ -63,6 +104,9 @@ def fillna_columns(dataframe, mode='train', model_path=None):
             lambda row: mapping_dict[row[grouping_feature]] if pd.isnull(row[missing_feature]) else row[
                 missing_feature], axis=1)
 
+    for feature in simple_features:
+        X[feature] = X[feature].fillna('inconnu')
+
     return X
 
 
@@ -80,5 +124,9 @@ def category_to_numerical_features(dataframe, features, mode='train', model_path
 
     X['DIAMETREARBREAUNMETRE'] = X['DIAMETREARBREAUNMETRE'].map(lambda x: '-1' if x == 'inconnu' else x)
     X['DIAMETREARBREAUNMETRE'] = X['DIAMETREARBREAUNMETRE'].map(lambda x: x.split(' ')[0]).astype('int')
+
+    X['NOTEDIAGNOSTIC'] = X['NOTEDIAGNOSTIC'].apply(notediag_to_num)
+    X['PRIORITEDERENOUVELLEMENT'] = X['PRIORITEDERENOUVELLEMENT'].apply(prio_renouv_to_num)
+    X['REMARQUES'] = X['REMARQUES'].apply(remarques_to_num)
 
     return X
