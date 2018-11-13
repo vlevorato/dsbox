@@ -20,7 +20,6 @@ class DataInputFileUnit(DataInputUnit):
         self.input_path = input_path
         self.pandas_read_function_name = pandas_read_function_name
         self.pandas_kwargs_read = kwargs
-        print(input_path)
 
     def read_data(self):
         dataframe = getattr(pd, self.pandas_read_function_name)(self.input_path, **self.pandas_kwargs_read)
@@ -32,7 +31,6 @@ class DataOutputFileUnit(DataOutputUnit):
         self.output_path = output_path
         self.pandas_write_function_name = pandas_write_function_name
         self.pandas_kwargs_write = kwargs
-        print(output_path)
 
     def write_data(self, dataframe):
         getattr(dataframe, self.pandas_write_function_name)(self.output_path, **self.pandas_kwargs_write)
