@@ -9,13 +9,11 @@ from dsbox.examples.tree_disease_usecase.ml.feature_engineering import join_data
 from dsbox.examples.tree_disease_usecase.ml.modeling import fit_write_model, read_predict_model, model_performance
 from dsbox.examples.tree_disease_usecase.ml.sub_dags import feature_engineering_sub_dag
 from dsbox.operators.data_operator import DataOperator
-from dsbox.operators.data_unit import DataInputFileUnit, DataOutputFileUnit, DataInputMultiFileUnit
+from dsbox.operators.data_unit import DataInputFileUnit, DataOutputFileUnit, DataInputMultiFileUnit, DataOutputDBUnit
 from dsbox.utils import execute_dag, plot_dag
 from dsbox.utils import FilenameGenerator
 
-from sqlalchemy import create_engine
-
-engine = create_engine('sqlite:///tree_disease.db', echo=False)
+db_url = 'sqlite:///tree_disease.db'
 
 project_path = os.getenv('PROJECT_PATH')
 
@@ -40,7 +38,9 @@ temp_files = []
 for i in range(0, 100):
     temp_files.append(filename_generator.generate_filename() + '.parquet')
 
-dag = DAG(dag_id='Tree_Disease_Prediction', start_date=datetime.now())
+
+dag = DAG(dag_id='Tree_Disease_Prediction', description='Tree Disease Prediction Example',
+          schedule_interval='0 12 * * *', start_date=datetime(2017, 3, 20), catchup=False)
 
 input_csv_files_unit = DataInputMultiFileUnit([project_path + 'datasets/input/X_tree_egc_t1.csv',
                                                project_path + 'datasets/input/X_geoloc_egc_t1.csv',
@@ -126,9 +126,7 @@ task_model_metric = DataOperator(operation_function=model_performance,
 
 task_model_predict.set_downstream(task_model_metric)
 
-output_result_unit = DataOutputFileUnit('predictions', pandas_write_function_name='to_sql',
-                                        con=engine,
-                                        if_exists='replace')
+output_result_unit = DataOutputDBUnit('predictions', db_url, if_exists='replace')
 task_export_to_sqlite = DataOperator(operation_function=dummy_function,
                                      input_unit=input_result_file_unit,
                                      output_unit=output_result_unit,
@@ -144,4 +142,4 @@ task_export_to_sqlite.set_downstream(task_purge_temp_files)
 
 # for local execution
 # plot_dag(dag)
-#execute_dag(dag, verbose=True)
+# execute_dag(dag, verbose=True)

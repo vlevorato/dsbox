@@ -4,6 +4,7 @@ import pandas as pd
 import psycopg2 as pg
 import sqlalchemy
 
+
 class DBconnector():
     def __init__(self, username, password, hostname, port, dbname, baseprotocol=''):
         self.username = username
@@ -20,9 +21,9 @@ class DBconnector():
         df.to_sql(table_name, self.engine, **kwargs)
 
     def table_to_df(self, table_name, **kwargs):
-        return pd.read_sql_query('SELECT * from '+table_name, self.engine, **kwargs)
+        return pd.read_sql_query('SELECT * from ' + table_name, self.engine, **kwargs)
 
-    def check_table(self,table_name, schema=None):
+    def check_table(self, table_name, schema=None):
         if schema is None:
             return self.engine.has_table(table_name)
         else:
@@ -50,7 +51,7 @@ class DBconnectorPG(DBconnector):
         curs.copy_from(data, table_name, sep=',', null=null_value)
         curs.connection.commit()
 
-    def bulk_to_pg(self, df, table_name, to_pg_drop=False, null_value='NULL'):
+    def _bulk_to_pg(self, df, table_name, to_pg_drop=False, null_value='NULL'):
         data = io.StringIO()
         df.to_csv(data, header=True, index=False, na_rep=null_value, sep=',', quotechar='"')
         data.seek(0)

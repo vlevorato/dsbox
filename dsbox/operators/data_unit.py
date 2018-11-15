@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 import pandas as pd
-
+from sqlalchemy import create_engine
 
 class DataInputUnit(ABC):
     @abstractmethod
@@ -66,3 +66,23 @@ class DataInputMultiFileUnit(DataInputUnit):
         for input_path in self.input_path_list:
             dataframe_list.append(getattr(pd, self.pandas_read_function_name)(input_path, **self.pandas_kwargs_read))
         return dataframe_list
+
+class DataInputDBUnit(DataInputUnit):
+    def __init__(self, sql_query, db_url,  **kwargs):
+        self.sql_query = sql_query
+        self.db_url = db_url
+        self.pandas_kwargs_read = kwargs
+
+    def read_data(self):
+        engine = create_engine(self.db_url, echo=False)
+        return pd.read_sql(self.sql_query, engine, **self.pandas_kwargs_read)
+
+class DataOutputDBUnit(DataOutputUnit):
+    def __init__(self, output_name, db_url,  **kwargs):
+        self.output_name = output_name
+        self.db_url = db_url
+        self.pandas_kwargs_write = kwargs
+
+    def write_data(self, dataframe):
+        engine = create_engine(self.db_url, echo=False)
+        dataframe.to_sql(self.output_name, engine, **self.pandas_kwargs_write)
