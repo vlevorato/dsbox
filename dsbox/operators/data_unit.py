@@ -3,6 +3,9 @@ from abc import ABC, abstractmethod
 import pandas as pd
 from sqlalchemy import create_engine
 
+from dsbox.dbconnection.dbconnector import DBconnectorPG
+
+
 class DataInputUnit(ABC):
     @abstractmethod
     def read_data(self):
@@ -86,3 +89,30 @@ class DataOutputDBUnit(DataOutputUnit):
     def write_data(self, dataframe):
         engine = create_engine(self.db_url, echo=False)
         dataframe.to_sql(self.output_name, engine, **self.pandas_kwargs_write)
+
+class DataPGUnit:
+    def __init__(self, connection_infos_dict):
+        self.username = connection_infos_dict['username']
+        self.password = connection_infos_dict['password']
+        self.hostname = connection_infos_dict['hostname']
+        self.port = connection_infos_dict['port']
+        self.dbname = connection_infos_dict['dbname']
+
+
+class DataInputPGUnit(DataPGUnit, DataInputUnit):
+    def __init__(self, connection_infos_dict, **kwargs):
+        super(DataInputPGUnit, self).__init__(connection_infos_dict)
+        self.dbconnector_kwargs = kwargs
+
+    def read_data(self):
+        dbconnector = DBconnectorPG(self.username, self.password, self.hostname, self.port, self.dbname)
+        return dbconnector.bulk_from_pg(**self.dbconnector_kwargs)
+
+class DataOutoutPGUnit(DataPGUnit, DataOutputUnit):
+    def __init__(self, connection_infos_dict, **kwargs):
+        super(DataOutoutPGUnit, self).__init__(connection_infos_dict)
+        self.dbconnector_kwargs = kwargs
+
+    def write_data(self, dataframe):
+        dbconnector = DBconnectorPG(self.username, self.password, self.hostname, self.port, self.dbname)
+        dbconnector.bulk_to_pg(dataframe, **self.dbconnector_kwargs)

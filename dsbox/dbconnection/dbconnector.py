@@ -38,7 +38,7 @@ class DBconnectorPG(DBconnector):
                               host=self.hostname, port=self.port, dbname=self.dbname)
         self.con.autocommit = True
 
-    def bulk_to_pg_old(self, df, table_name, to_pg_drop=False, null_value='NULL'):
+    def _bulk_to_pg_old(self, df, table_name, to_pg_drop=False, null_value='NULL'):
         data = io.StringIO()
         df.to_csv(data, header=False, index=False, na_rep=null_value, sep=',')
         data.seek(0)
@@ -51,7 +51,7 @@ class DBconnectorPG(DBconnector):
         curs.copy_from(data, table_name, sep=',', null=null_value)
         curs.connection.commit()
 
-    def _bulk_to_pg(self, df, table_name, to_pg_drop=False, null_value='NULL'):
+    def bulk_to_pg(self, df, table_name, to_pg_drop=False, null_value='NULL'):
         data = io.StringIO()
         df.to_csv(data, header=True, index=False, na_rep=null_value, sep=',', quotechar='"')
         data.seek(0)
