@@ -108,9 +108,9 @@ class DataInputPGUnit(DataPGUnit, DataInputUnit):
         dbconnector = DBconnectorPG(self.username, self.password, self.hostname, self.port, self.dbname)
         return dbconnector.bulk_from_pg(**self.dbconnector_kwargs)
 
-class DataOutoutPGUnit(DataPGUnit, DataOutputUnit):
+class DataOutputPGUnit(DataPGUnit, DataOutputUnit):
     def __init__(self, connection_infos_dict, **kwargs):
-        super(DataOutoutPGUnit, self).__init__(connection_infos_dict)
+        super(DataOutputPGUnit, self).__init__(connection_infos_dict)
         self.dbconnector_kwargs = kwargs
 
     def write_data(self, dataframe):
