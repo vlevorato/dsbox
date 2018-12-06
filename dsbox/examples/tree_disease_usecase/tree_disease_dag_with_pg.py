@@ -27,7 +27,7 @@ pg_connection_dict['dbname'] = os.getenv('DSBOX_PG_DBNAME')
 
 
 def dummy_function(dataframe):
-    return dataframe
+    return dataframe.fillna('NA')
 
 
 features_selection = ['ADR_SECTEUR', 'ANNEEDEPLANTATION', 'coord_x', 'coord_y',
@@ -38,7 +38,7 @@ features_selection = ['ADR_SECTEUR', 'ANNEEDEPLANTATION', 'coord_x', 'coord_y',
                       'TRAITEMENTCHENILLES', 'TRAVAUXPRECONISESDIAG', 'TROTTOIR',
                       'VARIETE', 'VIGUEUR', 'CODE_PARENT']
 
-feature_target = 'Default'
+feature_target = 'Defaut'
 prediction_column_name = 'y_prediction'
 
 filename_generator = FilenameGenerator(path=project_path + 'datasets/temp/')
@@ -47,7 +47,7 @@ for i in range(0, 100):
     temp_files.append(filename_generator.generate_filename() + '.parquet')
 
 
-dag = DAG(dag_id='Tree_Disease_Prediction', description='Tree Disease Prediction Example',
+dag = DAG(dag_id='Tree_Disease_Prediction_with_pg', description='Tree Disease Prediction Example (with PG)',
           schedule_interval='0 12 * * *', start_date=datetime(2017, 3, 20), catchup=False)
 
 input_csv_files_unit = DataInputMultiFileUnit([project_path + 'datasets/input/X_tree_egc_t1.csv',
@@ -134,7 +134,7 @@ task_model_metric = DataOperator(operation_function=model_performance,
 
 task_model_predict.set_downstream(task_model_metric)
 
-output_result_unit = DataOutputPGUnit(pg_connection_dict, table_name='predictions', to_pg_drop=True)
+output_result_unit = DataOutputPGUnit(pg_connection_dict, table_name='tree_disease.predictions', to_pg_drop=True)
 task_export_to_sqlite = DataOperator(operation_function=dummy_function,
                                      input_unit=input_result_file_unit,
                                      output_unit=output_result_unit,
