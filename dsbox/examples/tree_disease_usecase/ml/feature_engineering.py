@@ -2,8 +2,26 @@ import numpy as np
 import pandas as pd
 from sklearn.impute import SimpleImputer
 
+from pyproj import Proj, transform
+
 from dsbox.ml.feature_engineering import TagEncoder
 from dsbox.utils import write_model_file, load_model_file
+
+
+
+def lambert_coord_to_long_lat(x, y, inProj, outProj):
+    return transform(inProj, outProj, x, y)
+
+def transform_df_coordinates(dataframe,x_column, y_column):
+
+    inProj = Proj(init="epsg:3945")
+    outProj = Proj(proj='lonlat', ellps='WGS84')
+
+    dataframe[['long', 'lat']] = dataframe.apply(lambda row: lambert_coord_to_long_lat(row[x_column], row[y_column],
+                                                                                       inProj, outProj), axis=1)\
+        .apply(pd.Series)
+
+    return dataframe
 
 
 def join_dataframes(dataframe_list):
