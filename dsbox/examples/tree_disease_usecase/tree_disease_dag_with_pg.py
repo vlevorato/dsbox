@@ -14,8 +14,6 @@ from dsbox.operators.data_unit import DataInputFileUnit, DataOutputFileUnit, Dat
 from dsbox.utils import execute_dag, plot_dag
 from dsbox.utils import FilenameGenerator
 
-db_url = 'sqlite:///tree_disease.db'
-
 project_path = os.getenv('PROJECT_PATH')
 
 pg_connection_dict = {}
