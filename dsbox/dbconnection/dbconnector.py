@@ -51,9 +51,9 @@ class DBconnectorPG(DBconnector):
         curs.copy_from(data, table_name, sep=',', null=null_value)
         curs.connection.commit()
 
-    def bulk_to_pg(self, df, table_name, to_pg_drop=False, null_value='NULL'):
+    def bulk_to_pg(self, df, table_name, to_pg_drop=False):
         data = io.StringIO()
-        df.to_csv(data, header=True, index=False, na_rep=null_value, sep=',', quotechar='"')
+        df.to_csv(data, header=True, index=False, sep=',', quotechar='"')
         data.seek(0)
         cursor = self.con.cursor()
         if to_pg_drop:
