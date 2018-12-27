@@ -100,6 +100,7 @@ task_feature_engineering_for_test = SubDagOperator(
 )
 
 task_concate_test_files.set_downstream(task_feature_engineering_for_test)
+task_feature_engineering_for_train.set_downstream(task_feature_engineering_for_test)
 
 task_model_predict = DataOperator(operation_function=read_predict_model,
                                   params={'columns_selection': features_selection,
