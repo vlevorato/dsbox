@@ -24,10 +24,10 @@ def transform_df_coordinates(dataframe,x_column, y_column):
     return dataframe
 
 
-def join_dataframes(dataframe_list):
+def join_dataframes(dataframe_list, **kwargs):
     X = dataframe_list[0]
     for dataframe in dataframe_list[1:len(dataframe_list)]:
-        X = X.join(dataframe)
+        X = X.join(dataframe, **kwargs)
 
     return X
 
