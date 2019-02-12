@@ -90,18 +90,18 @@ class Shifter(BaseEstimator, TransformerMixin):
 
         X_shifted = pd.DataFrame()
 
-        for shift in self.shifts:
+        for shift_value in self.shifts:
             X_shifted_tmp = X
-            X_shifted_tmp = X_shifted_tmp.shift(periods=shift, **self.kwargs)
+            X_shifted_tmp = X_shifted_tmp.shift(periods=shift_value, **self.kwargs)
 
             prefix = ''
             suffix = ''
             if self.prefix != '':
-                prefix = self.prefix + str(shift) + '_'
+                prefix = self.prefix + str(shift_value) + '_'
             if self.suffix != '':
-                suffix = self.suffix + '_' + str(shift)
+                suffix = self.suffix + '_' + str(shift_value)
             if self.suffix == '' and self.prefix == '':
-                suffix = '_' + str(shift)
+                suffix = '_' + str(shift_value)
 
             X_shifted_tmp.columns = X_shifted_tmp.columns.map(lambda x: prefix + x + suffix)
             if len(X_shifted) == 0:
