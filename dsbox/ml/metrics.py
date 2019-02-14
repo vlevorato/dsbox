@@ -142,7 +142,7 @@ def mape(y_true, y_pred):
            <https://en.wikipedia.org/wiki/Mean_absolute_percentage_error>`
 
     """
-    return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+    return np.mean(np.ma.masked_invalid(np.abs((y_true - y_pred) / y_true))) * 100
 
 
 def precision_with_fixed_recall(y_true, y_pred_proba, fixed_recall):
