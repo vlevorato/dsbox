@@ -99,7 +99,7 @@ class Shifter(BaseEstimator, TransformerMixin):
             if self.prefix != '':
                 prefix = self.prefix + str(shift_value) + '_'
             if self.suffix != '':
-                suffix = self.suffix + '_' + str(shift_value)
+                suffix = self.suffix + str(shift_value)
             if self.suffix == '' and self.prefix == '':
                 suffix = '_' + str(shift_value)
 
