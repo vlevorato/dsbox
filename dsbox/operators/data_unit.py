@@ -29,6 +29,14 @@ class DataInputFileUnit(DataInputUnit):
         return dataframe
 
 
+class DataInputPathUnit(DataInputUnit):
+    def __init__(self, input_path):
+        self.input_path = input_path
+
+    def read_data(self):
+        return self.input_path
+
+
 class DataOutputFileUnit(DataOutputUnit):
     def __init__(self, output_path, pandas_write_function_name='to_csv', **kwargs):
         self.output_path = output_path
@@ -70,8 +78,17 @@ class DataInputMultiFileUnit(DataInputUnit):
             dataframe_list.append(getattr(pd, self.pandas_read_function_name)(input_path, **self.pandas_kwargs_read))
         return dataframe_list
 
+
+class DataInputMultiPathUnit(DataInputUnit):
+    def __init__(self, input_path_list):
+        self.input_path_list = input_path_list
+
+    def read_data(self):
+        return self.input_path_list
+
+
 class DataInputDBUnit(DataInputUnit):
-    def __init__(self, sql_query, db_url,  **kwargs):
+    def __init__(self, sql_query, db_url, **kwargs):
         self.sql_query = sql_query
         self.db_url = db_url
         self.pandas_kwargs_read = kwargs
@@ -80,8 +97,9 @@ class DataInputDBUnit(DataInputUnit):
         engine = create_engine(self.db_url, echo=False)
         return pd.read_sql(self.sql_query, engine, **self.pandas_kwargs_read)
 
+
 class DataOutputDBUnit(DataOutputUnit):
-    def __init__(self, output_name, db_url,  **kwargs):
+    def __init__(self, output_name, db_url, **kwargs):
         self.output_name = output_name
         self.db_url = db_url
         self.pandas_kwargs_write = kwargs
@@ -89,6 +107,7 @@ class DataOutputDBUnit(DataOutputUnit):
     def write_data(self, dataframe):
         engine = create_engine(self.db_url, echo=False)
         dataframe.to_sql(self.output_name, engine, **self.pandas_kwargs_write)
+
 
 class DataPGUnit:
     def __init__(self, connection_infos_dict):
@@ -107,6 +126,7 @@ class DataInputPGUnit(DataPGUnit, DataInputUnit):
     def read_data(self):
         dbconnector = DBconnectorPG(self.username, self.password, self.hostname, self.port, self.dbname)
         return dbconnector.bulk_from_pg(**self.dbconnector_kwargs)
+
 
 class DataOutputPGUnit(DataPGUnit, DataOutputUnit):
     def __init__(self, connection_infos_dict, **kwargs):
