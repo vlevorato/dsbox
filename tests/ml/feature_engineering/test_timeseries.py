@@ -3,8 +3,9 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from dsbox.ml.feature_engineering.timeseries import Shifter, RollingWindower
+from dsbox.ml.feature_engineering.timeseries import Shifter, RollingWindower, DistributionTransformer
 from dsbox.ml.outliers import mad
+from pandas.util.testing import assert_frame_equal
 
 
 class TestComputeShift(unittest.TestCase):
@@ -85,6 +86,7 @@ class TestComputeShift(unittest.TestCase):
 
         self.assertTrue(df_expected.equals(df_shifted[df_expected.columns]))
 
+
 class TestRollingWindower(unittest.TestCase):
     def test_compute_moving_average(self):
         df = pd.DataFrame({'data': [0, 1, 2, 3, 4], 'data_bis': [3, 1, 0, 4, 1]})
@@ -129,3 +131,21 @@ class TestRollingWindower(unittest.TestCase):
 
         df_test = df_mean_ts.sub(roller.transform(df_ts))
         self.assertEqual(df_test.sum().sum(), 0)
+
+
+class TestDistribution(unittest.TestCase):
+    def test_distribution_transformer_should_produce_df_distribution_per_column_for_int_window(self):
+        # given
+        df = pd.DataFrame({'sales': [3, 10, 12, 23, 48, 19, 21]})
+
+        # when
+        distrib_transformer = DistributionTransformer(3)
+        df_distrib = distrib_transformer.fit_transform(df)
+
+        # then
+        df_expected = pd.DataFrame({'sales_bin_1': [0, 1, 1, 2, 1, 2, 2],
+                                    'sales_bin_2': [0, 0, 0, 0, 1, 0, 0],
+                                    'sales_bin_3': [1, 0, 0, 0, 0, 0, 0],
+                                    'sales_bin_4': [0, 1, 2, 1, 1, 1, 1]})
+
+        assert_frame_equal(df_expected, df_distrib)
