@@ -94,7 +94,7 @@ def mspe(y_true, y_pred):
            <https://en.wikipedia.org/wiki/Mean_percentage_error>`
 
     """
-    return np.mean(np.square(((y_true - y_pred) / y_pred)))
+    return np.mean(np.ma.masked_invalid(np.square((y_true - y_pred) / y_true)))
 
 
 def rmspe(y_true, y_pred):
