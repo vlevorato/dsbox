@@ -49,7 +49,7 @@ def generalized_jaccard_similarity_score(y_true, y_pred):
     return min_count / float(max_count)
 
 
-def rmse(y_true, y_pred):
+def root_mean_squared_error(y_true, y_pred):
     """ Root Mean Square Error
 
     Parameters
@@ -73,7 +73,7 @@ def rmse(y_true, y_pred):
     return np.sqrt(mean_squared_error(y_true, y_pred))
 
 
-def mspe(y_true, y_pred):
+def mean_squared_percentage_error(y_true, y_pred):
     """ Mean Square Percentage Error
 
     Parameters
@@ -97,7 +97,7 @@ def mspe(y_true, y_pred):
     return np.mean(np.ma.masked_invalid(np.square((y_true - y_pred) / y_true)))
 
 
-def rmspe(y_true, y_pred):
+def root_mean_squared_percentage_error(y_true, y_pred):
     """ Root Mean Square Percentage Error
 
     Parameters
@@ -118,10 +118,10 @@ def rmspe(y_true, y_pred):
            <https://en.wikipedia.org/wiki/Mean_percentage_error>`
 
     """
-    return np.sqrt(mspe(y_true, y_pred))
+    return np.sqrt(mean_squared_percentage_error(y_true, y_pred))
 
 
-def mape(y_true, y_pred):
+def mean_absolute_percentage_error(y_true, y_pred):
     """ Mean Absolute Percentage Error
 
     Parameters
@@ -142,7 +142,7 @@ def mape(y_true, y_pred):
            <https://en.wikipedia.org/wiki/Mean_absolute_percentage_error>`
 
     """
-    return np.mean(np.ma.masked_invalid(np.abs((y_true - y_pred) / y_true))) * 100
+    return np.mean(np.ma.masked_invalid(np.abs((y_true - y_pred) / y_true)))
 
 
 def precision_with_fixed_recall(y_true, y_pred_proba, fixed_recall):
