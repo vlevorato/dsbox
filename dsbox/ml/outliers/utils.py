@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def mad(x):
+def median_absolute_deviation(x):
     """
     Median Absolute Deviation
     """
@@ -30,7 +30,7 @@ def mad_outliers(x, cutoff=2):
     Boolean array with outlier tag
 
     """
-    mad_value = mad(x)
+    mad_value = median_absolute_deviation(x)
     if mad_value == 0:
         raise ZeroDivisionError("Median Absolute Deviation is equal to zero.")
 

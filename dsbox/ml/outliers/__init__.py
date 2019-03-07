@@ -1,4 +1,4 @@
-from .utils import mad, mad_outliers, fft_outliers
+from .utils import median_absolute_deviation, mad_outliers, fft_outliers
 from .outliers import CovarianceOutliers, GaussianProcessOutliers
 from .outliers import KMeansOneClusterOutliers, KMeansIterativeOneClusterOutliers
 from .outliers import GMMOutliers, ClusteringOutliers

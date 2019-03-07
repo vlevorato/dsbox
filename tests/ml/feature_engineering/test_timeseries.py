@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from dsbox.ml.feature_engineering.timeseries import Shifter, RollingWindower, DistributionTransformer
-from dsbox.ml.outliers import mad
+from dsbox.ml.outliers import median_absolute_deviation
 from pandas.util.testing import assert_frame_equal
 
 
@@ -101,7 +101,7 @@ class TestRollingWindower(unittest.TestCase):
     def test_compute_custom_function(self):
         df = pd.DataFrame({'data': [0, 1, 2, 3, 4], 'data_bis': [3, 1, 0, 4, 1]})
 
-        roller = RollingWindower(operation=mad, windows=[3], min_periods=1)
+        roller = RollingWindower(operation=median_absolute_deviation, windows=[3], min_periods=1)
 
         # compute potential differences -> test will fail if a difference is present
         df_mad_true = pd.DataFrame({'mad_3_data': [0, 0.5, 1, 1, 1], 'mad_3_data_bis': [0, 1, 1, 1, 1]})
