@@ -136,21 +136,21 @@ task_model_metric = DataOperator(operation_function=model_performance,
 task_model_predict.set_downstream(task_model_metric)
 
 output_result_unit = DataOutputPGUnit(pg_connection_dict, table_name='tree_disease.predictions', to_pg_drop=True)
-task_export_to_sqlite = DataOperator(operation_function=transform_df_coordinates,
-                                     params={'x_column': 'coord_x',
+task_export_to_psql = DataOperator(operation_function=transform_df_coordinates,
+                                   params={'x_column': 'coord_x',
                                              'y_column': 'coord_y'
                                              },
-                                     input_unit=input_result_file_unit,
-                                     output_unit=output_result_unit,
-                                     dag=dag, task_id='Export_result_to_Postgres')
+                                   input_unit=input_result_file_unit,
+                                   output_unit=output_result_unit,
+                                   dag=dag, task_id='Export_result_to_Postgres')
 
-task_model_predict.set_downstream(task_export_to_sqlite)
+task_model_predict.set_downstream(task_export_to_psql)
 
 task_purge_temp_files = BashOperator(task_id='Purge_temp_files',
                                      bash_command='rm ' + project_path + 'datasets/temp/*',
                                      dag=dag)
 
-task_export_to_sqlite.set_downstream(task_purge_temp_files)
+task_export_to_psql.set_downstream(task_purge_temp_files)
 
 # for local execution
 # plot_dag(dag)

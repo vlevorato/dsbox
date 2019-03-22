@@ -342,3 +342,24 @@ class DistributionTransformer(BaseEstimator, TransformerMixin):
                 X_distrib = X_distrib.join(X_col_distrib)
 
         return X_distrib
+
+
+def transform_datetxt2int(X, col_date, format='%Y-%m-%d'):
+    """
+    Inplace transformation of a string date column into an integer format date column.
+
+    Parameters
+    ----------
+    X: dataframe
+
+    col_date: str
+        Column name to transform
+
+    format: str
+        Pandas date str format
+
+    """
+
+    X[col_date] = pd.to_datetime(X[col_date], format=format)
+    X[col_date] = X[col_date].map(lambda x: (x.year * 10 ** 4) + (x.month * 10 ** 2) + x.day)
+    X[col_date] = X[col_date].astype('int')

@@ -5,20 +5,19 @@ from sklearn.impute import SimpleImputer
 from pyproj import Proj, transform
 
 from dsbox.ml.feature_engineering import TagEncoder
-from dsbox.utils import write_model_file, load_model_file
-
+from dsbox.utils import write_object_file, load_object_file
 
 
 def lambert_coord_to_long_lat(x, y, inProj, outProj):
     return transform(inProj, outProj, x, y)
 
-def transform_df_coordinates(dataframe,x_column, y_column):
 
+def transform_df_coordinates(dataframe, x_column, y_column):
     inProj = Proj(init="epsg:3945")
     outProj = Proj(proj='lonlat', ellps='WGS84')
 
     dataframe[['long', 'lat']] = dataframe.apply(lambda row: lambert_coord_to_long_lat(row[x_column], row[y_column],
-                                                                                       inProj, outProj), axis=1)\
+                                                                                       inProj, outProj), axis=1) \
         .apply(pd.Series)
 
     return dataframe
@@ -44,7 +43,6 @@ def dict_missing_feature(dataframe, missing_values_feature, groupby_feature, dum
 
 
 def notediag_to_num(text):
-
     if text == "Arbre d'avenir normal":
         return 0
     if text == "Arbre d'avenir incertain":
@@ -60,7 +58,6 @@ def notediag_to_num(text):
 
 
 def prio_renouv_to_num(text):
-
     if text == "plus de 20 ans":
         return 20
     if "de 11" in text:
@@ -74,7 +71,6 @@ def prio_renouv_to_num(text):
 
 
 def remarques_to_num(text):
-
     if pd.isnull(text) or text == '0':
         return 0
 
@@ -83,15 +79,16 @@ def remarques_to_num(text):
 
     return 1
 
+
 def fillna_columns(dataframe, simple_features=[], mode='train', model_path=None):
     X = dataframe
 
     if mode == 'train':
         imputer_ANNEEREALISATIONDIAGNOSTIC = SimpleImputer(missing_values=np.nan, strategy='mean')
         imputer_ANNEEREALISATIONDIAGNOSTIC.fit(X[['ANNEEREALISATIONDIAGNOSTIC']])
-        write_model_file(model_path + 'imputer_ANNEEREALISATIONDIAGNOSTIC.feat', imputer_ANNEEREALISATIONDIAGNOSTIC)
+        write_object_file(model_path + 'imputer_ANNEEREALISATIONDIAGNOSTIC.feat', imputer_ANNEEREALISATIONDIAGNOSTIC)
     else:
-        imputer_ANNEEREALISATIONDIAGNOSTIC = load_model_file(model_path + 'imputer_ANNEEREALISATIONDIAGNOSTIC.feat')
+        imputer_ANNEEREALISATIONDIAGNOSTIC = load_object_file(model_path + 'imputer_ANNEEREALISATIONDIAGNOSTIC.feat')
 
     X['ANNEEREALISATIONDIAGNOSTIC'] = imputer_ANNEEREALISATIONDIAGNOSTIC.transform(X[['ANNEEREALISATIONDIAGNOSTIC']])
     X['ANNEEREALISATIONDIAGNOSTIC'] = np.round(X['ANNEEREALISATIONDIAGNOSTIC']).astype('int')
@@ -109,9 +106,9 @@ def fillna_columns(dataframe, simple_features=[], mode='train', model_path=None)
 
         if mode == 'train':
             mapping_dict = dict_missing_feature(X, missing_feature, grouping_feature, 'CODE')
-            write_model_file(model_path + 'mapping_dict_' + missing_feature + '.feat', mapping_dict)
+            write_object_file(model_path + 'mapping_dict_' + missing_feature + '.feat', mapping_dict)
         else:
-            mapping_dict = load_model_file(model_path + 'mapping_dict_' + missing_feature + '.feat')
+            mapping_dict = load_object_file(model_path + 'mapping_dict_' + missing_feature + '.feat')
 
         grouping_feature_values = X[grouping_feature].unique()
         for grouping_feature_value in grouping_feature_values:
@@ -135,9 +132,9 @@ def category_to_numerical_features(dataframe, features, mode='train', model_path
         if mode == 'train':
             tagencoder = TagEncoder()
             X[feature] = tagencoder.fit_transform(X[feature])
-            write_model_file(model_path + 'tagencoder_' + feature + '.feat', tagencoder)
+            write_object_file(model_path + 'tagencoder_' + feature + '.feat', tagencoder)
         else:
-            tagencoder = load_model_file(model_path + 'tagencoder_' + feature + '.feat')
+            tagencoder = load_object_file(model_path + 'tagencoder_' + feature + '.feat')
             X[feature] = tagencoder.transform(X[feature])
 
     X['DIAMETREARBREAUNMETRE'] = X['DIAMETREARBREAUNMETRE'].map(lambda x: '-1' if x == 'inconnu' else x)

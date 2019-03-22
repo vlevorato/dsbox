@@ -65,7 +65,7 @@ def execute_dag(dag, verbose=False):
 
     for task in task_list:
         if verbose:
-            print(dag.dag_id+'-'+str(task))
+            print(dag.dag_id + '-' + str(task))
         if task.task_type == 'SubDagOperator':
             execute_dag(task.subdag, verbose=verbose)
         else:
@@ -103,23 +103,31 @@ def plot_dag(dag):
     plt.show()
 
 
-def pickle_compress(model):
-    return gzip.zlib.compress(pickle.dumps(model))
+def pickle_compress(obj):
+    return gzip.zlib.compress(pickle.dumps(obj))
 
 
-def decompress_unpickle(model_zp):
-    return pickle.loads(gzip.zlib.decompress(model_zp))
+def decompress_unpickle(obj_zp):
+    return pickle.loads(gzip.zlib.decompress(obj_zp))
 
 
-def write_model_file(file_path, model):
-    model_pz = pickle_compress(model)
+def write_object_file(file_path, obj):
+    obj_pz = pickle_compress(obj)
     file_obj = open(file_path, 'wb')
-    file_obj.write(model_pz)
+    file_obj.write(obj_pz)
     file_obj.close()
 
 
-def load_model_file(file_path):
+def load_object_file(file_path):
     file_obj = open(file_path, 'rb')
-    model_pz = file_obj.read()
-    model = decompress_unpickle(model_pz)
-    return model
+    obj_pz = file_obj.read()
+    obj = decompress_unpickle(obj_pz)
+    return obj
+
+
+def pandas_downcast_numeric(df_to_downcast, float_type_to_downcast=("float64", "float32"),
+                            int_type_to_downcast=("int64", "int32")):
+    float_cols = [c for c in df_to_downcast.columns if df_to_downcast[c].dtype == float_type_to_downcast[0]]
+    int_cols = [c for c in df_to_downcast.columns if df_to_downcast[c].dtype == int_type_to_downcast[0]]
+    df_to_downcast[float_cols] = df_to_downcast[float_cols].apply(lambda x: x.astype(float_type_to_downcast[1]))
+    df_to_downcast[int_cols] = df_to_downcast[int_cols].apply(lambda x: x.astype(int_type_to_downcast[1]))
