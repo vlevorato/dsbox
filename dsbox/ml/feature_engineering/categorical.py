@@ -1,5 +1,5 @@
-import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
+import types
 
 
 def project_continuous_on_categorical(dataframe, cat_col, cont_col, operation='mean'):
@@ -41,7 +41,7 @@ class CategoricalProjector(BaseEstimator, TransformerMixin):
     4    B             1.666667                1.333333
     """
 
-    def __init__(self, categories_to_project, continous_cols, operation=np.mean):
+    def __init__(self, categories_to_project, continous_cols, operation='mean'):
         self.categories_to_project = categories_to_project
         self.continous_cols = continous_cols
         self.operation = operation
@@ -84,10 +84,15 @@ class CategoricalProjector(BaseEstimator, TransformerMixin):
 
         X_result = X[self.categories_to_project]
 
+        operation_name = self.operation
+
+        if isinstance(self.operation, types.FunctionType):
+            operation_name = self.operation.__name__
+
         for cat_col in self.categories_to_project:
             for cont_col in self.continous_cols:
-                X_result[self.operation.__name__ + '_{}_per_{}'.format(cont_col, cat_col)] = \
-                    project_continuous_on_categorical(X, cat_col, cont_col)
+                X_result[operation_name + '_{}_per_{}'.format(cont_col, cat_col)] = \
+                    project_continuous_on_categorical(X, cat_col, cont_col, operation=self.operation)
 
         return X_result
 

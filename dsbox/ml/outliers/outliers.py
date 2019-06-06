@@ -17,7 +17,6 @@ from sklearn.utils.validation import check_is_fitted, column_or_1d
 from scipy.stats import norm
 
 
-
 class CovarianceOutliers(BaseEstimator):
     """ Covariance wrapper outlier estimator.
     
