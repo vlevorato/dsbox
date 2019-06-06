@@ -260,6 +260,9 @@ class DistributionTransformer(BaseEstimator, TransformerMixin):
 
         bins: int, optional, (default=4)
             Amount of bins used to estimate distribution
+        
+        quantiles: int, optional, (default=None)
+            If set, the transformer will return quantiles information.
 
     Examples
     --------
