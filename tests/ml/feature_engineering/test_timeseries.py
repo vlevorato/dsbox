@@ -134,7 +134,7 @@ class TestRollingWindower(unittest.TestCase):
 
 
 class TestDistribution(unittest.TestCase):
-    def test_distribution_transformer_should_produce_df_distribution_per_column_for_int_window(self):
+    def test_distribution_transformer_should_produce_df_distribution_per_column(self):
         # given
         df = pd.DataFrame({'sales': [3, 10, 12, 23, 48, 19, 21]})
 
@@ -147,5 +147,23 @@ class TestDistribution(unittest.TestCase):
                                     'sales_bin_2': [0, 0, 0, 0, 1, 0, 0],
                                     'sales_bin_3': [1, 0, 0, 0, 0, 0, 0],
                                     'sales_bin_4': [0, 1, 2, 1, 1, 1, 1]})
+
+        assert_frame_equal(df_expected, df_distrib)
+
+    def test_distribution_transformer_should_produce_df_quantile_per_column(self):
+        # given
+        df = pd.DataFrame({'sales': [3, 10, 12, 23, 48, 19, 21]})
+
+        # when
+        distrib_transformer = DistributionTransformer(3, quantiles=[0., 0.25, 0.5, 0.75, 1.])
+        df_distrib = distrib_transformer.fit_transform(df)
+
+        # then
+        df_expected = pd.DataFrame({'sales_quantile_1': [3., 3, 3, 10, 12, 19, 19],
+                                    'sales_quantile_2': [3, 4.75, 6.5, 11, 17.5, 21, 20],
+                                    'sales_quantile_3': [3, 6.5, 10, 12, 23, 23, 21],
+                                    'sales_quantile_4': [3, 8.25, 11, 17.5, 35.5, 35.5, 34.5],
+                                    'sales_quantile_5': [3., 10, 12, 23, 48, 48, 48],
+                                    })
 
         assert_frame_equal(df_expected, df_distrib)

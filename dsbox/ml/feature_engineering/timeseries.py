@@ -279,9 +279,10 @@ class DistributionTransformer(BaseEstimator, TransformerMixin):
     6            2            0            0            1
     """
 
-    def __init__(self, window, bins=4):
+    def __init__(self, window, bins=4, quantiles=None):
         self.window = window
         self.bins = bins
+        self.quantiles = quantiles
 
     def fit(self, X=None, y=None):
         """
@@ -317,24 +318,32 @@ class DistributionTransformer(BaseEstimator, TransformerMixin):
                Dataframe with bin values per column.
 
         """
+
         X_distrib = pd.DataFrame()
 
         for col in X.columns:
             col_serie = X[col]
             bins_list = []
-            if type(self.window) is int:
-                for i in range(0, len(col_serie)):
-                    min_bound = i - self.window + 1
-                    if min_bound < 0:
-                        min_bound = 0
-                    max_bound = i + 1
-                    if max_bound >= len(col_serie):
-                        max_bound = len(col_serie)
+
+            for i in range(0, len(col_serie)):
+                min_bound = i - self.window + 1
+                if min_bound < 0:
+                    min_bound = 0
+                max_bound = i + 1
+                if max_bound >= len(col_serie):
+                    max_bound = len(col_serie)
+                if self.quantiles is None:
                     bins_list.append(np.histogram(col_serie[min_bound:max_bound], bins=self.bins)[0])
+                else:
+                    bins_list.append(np.quantile(col_serie[min_bound:max_bound], self.quantiles))
 
             X_col_distrib = pd.DataFrame(bins_list)
             X_col_distrib = X_col_distrib.set_index(X.index)
-            X_col_distrib.columns = [col + '_bin_' + str(i) for i in range(1, self.bins + 1)]
+            if self.quantiles is None:
+                X_col_distrib.columns = [col + '_bin_' + str(i) for i in range(1, self.bins + 1)]
+            else:
+                X_col_distrib.columns = [col + '_quantile_' + str(i) for i in range(1, len(self.quantiles) + 1)]
+                X_col_distrib = X_col_distrib.fillna(0)
 
             if len(X_distrib) == 0:
                 X_distrib = X_col_distrib
