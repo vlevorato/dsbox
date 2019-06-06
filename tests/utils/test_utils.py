@@ -24,7 +24,7 @@ class TestUtils(unittest.TestCase):
         tasks[4].set_downstream(tasks[5])
         tasks[4].set_downstream(tasks[8])
         tasks[8].set_downstream(tasks[9])
-        tasks[10].set_downstream(tasks[4])
+        tasks[10].set_downstream(tasks[1])
 
         tasks[6].set_downstream(tasks[7])
 
@@ -33,11 +33,24 @@ class TestUtils(unittest.TestCase):
 
         # then
         expected_task_lists = [
-            [tasks[0], tasks[1], tasks[2], tasks[3], tasks[4], tasks[5], tasks[8], tasks[9], tasks[6], tasks[7]],
-            [tasks[6], tasks[7], tasks[0], tasks[1], tasks[2], tasks[3], tasks[4], tasks[5], tasks[8], tasks[9]],
-            [tasks[0], tasks[1], tasks[2], tasks[3], tasks[4], tasks[8], tasks[9], tasks[5], tasks[6], tasks[7]],
-            [tasks[6], tasks[7], tasks[0], tasks[1], tasks[2], tasks[3], tasks[4], tasks[8], tasks[9], tasks[5]],
-            [tasks[0], tasks[1], tasks[2], tasks[4], tasks[8], tasks[9], tasks[6], tasks[7], tasks[3], tasks[5]]
+            [tasks[0], tasks[10], tasks[1], tasks[2], tasks[3], tasks[4], tasks[5], tasks[8], tasks[9], tasks[6], tasks[7]],
+            [tasks[10], tasks[0], tasks[1], tasks[2], tasks[3], tasks[4], tasks[5], tasks[8], tasks[9], tasks[6], tasks[7]],
+
+            [tasks[6], tasks[7], tasks[0], tasks[10], tasks[1], tasks[2], tasks[3], tasks[4], tasks[5], tasks[8], tasks[9]],
+            [tasks[6], tasks[7], tasks[10], tasks[0], tasks[1], tasks[2], tasks[3], tasks[4], tasks[5], tasks[8], tasks[9]],
+
+            [tasks[0], tasks[10], tasks[1], tasks[2], tasks[3], tasks[4], tasks[8], tasks[9], tasks[5], tasks[6], tasks[7]],
+            [tasks[10], tasks[0], tasks[1], tasks[2], tasks[3], tasks[4], tasks[8], tasks[9], tasks[5], tasks[6], tasks[7]],
+
+            [tasks[6], tasks[7], tasks[0], tasks[10], tasks[1], tasks[2], tasks[3], tasks[4], tasks[8], tasks[9], tasks[5]],
+            [tasks[6], tasks[7], tasks[10], tasks[0], tasks[1], tasks[2], tasks[3], tasks[4], tasks[8], tasks[9], tasks[5]],
+
+            [tasks[0], tasks[10], tasks[1], tasks[2], tasks[4], tasks[8], tasks[9], tasks[6], tasks[7], tasks[3], tasks[5]],
+            [tasks[10], tasks[0], tasks[1], tasks[2], tasks[4], tasks[8], tasks[9], tasks[6], tasks[7], tasks[3], tasks[5]],
+
+            [tasks[0], tasks[10], tasks[1], tasks[2], tasks[4], tasks[8], tasks[9], tasks[3], tasks[5], tasks[6], tasks[7]],
+            [tasks[10], tasks[0], tasks[1], tasks[2], tasks[4], tasks[8], tasks[9], tasks[3], tasks[5], tasks[6], tasks[7]],
+
         ]
 
         expected_task_list_is_ok = (task_list in expected_task_lists)
