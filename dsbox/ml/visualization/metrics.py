@@ -99,8 +99,8 @@ def plot_roc_curve(y_test, y_pred_probas, proba_step=None):
     >>> X, y = datasets.make_moons(noise=0.3, random_state=0)
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.5, random_state=0)
     
-    >>> clf = RandomForestClassifier(random_state=42)
-    >>> clf.fit(X_train, y_train)
+    >>> clf = RandomForestClassifier(n_estimators=10, random_state=42)
+    >>> _ = clf.fit(X_train, y_train)
     >>> y_pred_probas = clf.predict_proba(X_test)
     
     >>> plot_roc_curve(y_test, y_pred_probas, proba_step=2)

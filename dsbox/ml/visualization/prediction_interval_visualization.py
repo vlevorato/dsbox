@@ -34,8 +34,8 @@ def plot_eval_prediction_interval(target_eval, prediction, lower_error_list, upp
     >>> boston = load_boston()
     >>> data_train, data_eval, target_train, target_eval = train_test_split(boston['data'], boston['target'], test_size=0.3, random_state=42)
     
-    >>> rf = RandomForestRegressor(n_estimators=1000, n_jobs=-1)
-    >>> rf.fit(data_train, target_train)
+    >>> rf = RandomForestRegressor(n_estimators=100, n_jobs=-1)
+    >>> _ = rf.fit(data_train, target_train)
     
     >>> lower_error_list, upper_error_list = compute_prediction_interval(rf, data_eval, percentile=90)
     >>> prediction = rf.predict(data_eval)
@@ -83,8 +83,8 @@ def plot_prediction_interval(prediction, lower_error_list, upper_error_list, fig
 
     >>> boston = load_boston()
     >>> data_train, data_eval, target_train, target_eval = train_test_split(boston['data'], boston['target'], test_size=0.3, random_state=42)
-    >>> rf = RandomForestRegressor(n_estimators=1000, n_jobs=-1)
-    >>> rf.fit(data_train, target_train)
+    >>> rf = RandomForestRegressor(n_estimators=100, n_jobs=-1)
+    >>> _ = rf.fit(data_train, target_train)
 
     >>> lower_error_list, upper_error_list = compute_prediction_interval(rf, data_eval, percentile=90)
     >>> prediction = rf.predict(data_eval)
