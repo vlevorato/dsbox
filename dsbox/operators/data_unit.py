@@ -7,15 +7,25 @@ from dsbox.dbconnection.dbconnector import DBconnectorPG
 
 
 class DataInputUnit(ABC):
+    input_path = None
+
     @abstractmethod
     def read_data(self):
         pass
 
+    def __str__(self):
+        return self.input_path
+
 
 class DataOutputUnit(ABC):
+    output_path = None
+
     @abstractmethod
     def write_data(self, dataframe):
         pass
+
+    def __str__(self):
+        return self.output_path
 
 
 class DataInputFileUnit(DataInputUnit):
@@ -55,6 +65,9 @@ class DataInputPlasmaUnit(DataInputUnit):
     def read_data(self):
         return self.plasma_store.get_dataframe(self.object_id)
 
+    def __str__(self):
+        return "{}/{}".format(self.plasma_store, str(self.object_id))
+
 
 class DataOutputPlasmaUnit(DataOutputUnit):
     def __init__(self, plasma_store, object_id, overwrite=True):
@@ -64,6 +77,9 @@ class DataOutputPlasmaUnit(DataOutputUnit):
 
     def write_data(self, dataframe):
         self.plasma_store.put_dataframe(dataframe, self.object_id, overwrite=self.overwrite)
+
+    def __str__(self):
+        return "{}/{}".format(self.plasma_store, str(self.object_id))
 
 
 class DataInputMultiFileUnit(DataInputUnit):
@@ -78,12 +94,18 @@ class DataInputMultiFileUnit(DataInputUnit):
             dataframe_list.append(getattr(pd, self.pandas_read_function_name)(input_path, **self.pandas_kwargs_read))
         return dataframe_list
 
+    def __str__(self):
+        return self.input_path_list
+
 
 class DataInputMultiPathUnit(DataInputUnit):
     def __init__(self, input_path_list):
         self.input_path_list = input_path_list
 
     def read_data(self):
+        return self.input_path_list
+
+    def __str__(self):
         return self.input_path_list
 
 
@@ -97,6 +119,9 @@ class DataInputDBUnit(DataInputUnit):
         engine = create_engine(self.db_url, echo=False)
         return pd.read_sql(self.sql_query, engine, **self.pandas_kwargs_read)
 
+    def __str__(self):
+        return "query: \n{}".format(self.sql_query)
+
 
 class DataOutputDBUnit(DataOutputUnit):
     def __init__(self, output_name, db_url, **kwargs):
@@ -107,6 +132,9 @@ class DataOutputDBUnit(DataOutputUnit):
     def write_data(self, dataframe):
         engine = create_engine(self.db_url, echo=False)
         dataframe.to_sql(self.output_name, engine, **self.pandas_kwargs_write)
+
+    def __str__(self):
+        return self.output_name
 
 
 class DataPGUnit:
@@ -127,6 +155,9 @@ class DataInputPGUnit(DataPGUnit, DataInputUnit):
         dbconnector = DBconnectorPG(self.username, self.password, self.hostname, self.port, self.dbname)
         return dbconnector.bulk_from_pg(**self.dbconnector_kwargs)
 
+    def __str__(self):
+        return self.dbconnector_kwargs['table_name']
+
 
 class DataOutputPGUnit(DataPGUnit, DataOutputUnit):
     def __init__(self, connection_infos_dict, **kwargs):
@@ -136,3 +167,6 @@ class DataOutputPGUnit(DataPGUnit, DataOutputUnit):
     def write_data(self, dataframe):
         dbconnector = DBconnectorPG(self.username, self.password, self.hostname, self.port, self.dbname)
         dbconnector.bulk_to_pg(dataframe, **self.dbconnector_kwargs)
+
+    def __str__(self):
+        return self.dbconnector_kwargs['table_name']
