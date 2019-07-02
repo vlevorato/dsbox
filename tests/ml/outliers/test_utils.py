@@ -21,7 +21,7 @@ class UtilsOutliersTest(unittest.TestCase):
         a = np.array([1, 0, 0, 1, 10, 2, 115, 110, 32, 16, 2, 0, 15, 1])
 
         # when
-        outliers = mad_outliers(a)
+        outliers = mad_outliers(a, z_score_coeff=1.0)
 
         # then
         y_true = [False, False, False, False, True, False, True, True, True, True, False, False, True, False]

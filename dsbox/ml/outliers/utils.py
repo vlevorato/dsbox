@@ -1,6 +1,13 @@
 import numpy as np
 
 
+def mean_absolute_deviation(x):
+    """
+    Mean Absolute Deviation
+    """
+    return np.mean(np.abs(x - np.mean(x)))
+
+
 def median_absolute_deviation(x):
     """
     Median Absolute Deviation
@@ -8,7 +15,7 @@ def median_absolute_deviation(x):
     return np.median(np.abs(x - np.median(x)))
 
 
-def mad_outliers(x, cutoff=2):
+def mad_outliers(x, cutoff=2, z_score_coeff=0.6745):
     """
     Median Absolute Deviation outliers method.
     
@@ -24,6 +31,9 @@ def mad_outliers(x, cutoff=2):
     
     cutoff : int, optional (default=2)
         amount of times residuals relative to the median exceed the ratio to the MAD
+        
+    z_score_coeff : float, optional (default=0.6745)
+        0.6745 is the 0.75th quartile of the standard normal distribution, to which the MAD converges to.
     
     Returns
     -------
@@ -34,7 +44,7 @@ def mad_outliers(x, cutoff=2):
     if mad_value == 0:
         raise ZeroDivisionError("Median Absolute Deviation is equal to zero.")
 
-    x_mad = np.abs(x - np.median(x)) / mad_value
+    x_mad = (z_score_coeff * np.abs(x - np.median(x))) / mad_value
     return x_mad > cutoff
 
 
