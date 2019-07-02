@@ -15,6 +15,29 @@ def median_absolute_deviation(x):
     return np.median(np.abs(x - np.median(x)))
 
 
+def double_median_absolute_deviation(x):
+    """
+    If the underlying distribution of the data is unsymmetric, one should use the double median 
+    absolute deviation, instead of the classic mad.
+    
+    Parameters
+    ----------
+    x : array-like
+
+    Returns
+    -------
+    Couple of values: left mad, right mad
+
+    """
+    median = np.median(x)
+    absolute_deviation = np.abs(x - median)
+
+    left_mad = np.median(absolute_deviation[absolute_deviation <= median])
+    right_mad = np.median(absolute_deviation[absolute_deviation >= median])
+
+    return left_mad, right_mad
+
+
 def mad_outliers(x, cutoff=2, z_score_coeff=0.6745):
     """
     Median Absolute Deviation outliers method.

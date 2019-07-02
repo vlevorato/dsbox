@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from dsbox.ml.outliers import median_absolute_deviation, mad_outliers, fft_outliers
+from dsbox.ml.outliers import median_absolute_deviation, mad_outliers, fft_outliers, double_median_absolute_deviation
 
 
 class UtilsOutliersTest(unittest.TestCase):
@@ -15,6 +15,16 @@ class UtilsOutliersTest(unittest.TestCase):
 
         # then
         self.assertEqual(2.0, mad_value)
+
+    def test_double_mad(self):
+        # given
+        a = [1, 4, 4, 4, 5, 5, 5, 5, 7, 7, 8, 10, 16, 30]
+
+        # when
+        double_mad_values = double_median_absolute_deviation(a)
+
+        # then
+        self.assertEqual((1, 11), double_mad_values)
 
     def test_mad_outliers(self):
         # given
