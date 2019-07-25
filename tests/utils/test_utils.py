@@ -51,11 +51,20 @@ class TestUtils(unittest.TestCase):
             [tasks[0], tasks[10], tasks[1], tasks[2], tasks[4], tasks[8], tasks[9], tasks[3], tasks[5], tasks[6], tasks[7]],
             [tasks[10], tasks[0], tasks[1], tasks[2], tasks[4], tasks[8], tasks[9], tasks[3], tasks[5], tasks[6], tasks[7]],
 
+            [tasks[0], tasks[10], tasks[1], tasks[2], tasks[3], tasks[4], tasks[5], tasks[6], tasks[7], tasks[8], tasks[9]],
+            [tasks[10], tasks[0], tasks[1], tasks[2], tasks[3], tasks[4], tasks[5], tasks[6], tasks[7], tasks[8], tasks[9]],
+
+            [tasks[0], tasks[10], tasks[1], tasks[2], tasks[4], tasks[3], tasks[5], tasks[6], tasks[7], tasks[8], tasks[9]],
+            [tasks[10], tasks[0], tasks[1], tasks[2], tasks[4], tasks[3], tasks[5], tasks[6], tasks[7], tasks[8], tasks[9]],
+
         ]
+
+        print(task_list)
 
         expected_task_list_is_ok = (task_list in expected_task_lists)
 
         self.assertTrue(expected_task_list_is_ok)
+
 
 if __name__ == '__main__':
     unittest.main()

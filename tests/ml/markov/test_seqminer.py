@@ -9,7 +9,7 @@ from dsbox.ml.markov import MarkovSequenceMiner, TimeDurationSequenceMiner, Meta
 class TestMarkovSequenceMiner(unittest.TestCase):
     def test_chained_probas_with_transition_proba_matrix_prefilled(self):
         # given
-        pmatrix = np.matrix([[0.5, 0.25, 0.25],
+        pmatrix = np.array([[0.5, 0.25, 0.25],
                              [0.5, 0, 0.5],
                              [0.25, 0.25, 0.5]])
 
@@ -116,13 +116,13 @@ class TestTimeDurationSequenceMiner(unittest.TestCase):
 
         # when
         tds = TimeDurationSequenceMiner()
-        tds.fit(df[['event', 'timestamp']].as_matrix())
+        tds.fit(df[['event', 'timestamp']].values)
 
         df_test = pd.DataFrame({'event': ['a', 'b', 'b', 'a', 'b', 'a'],
                                 'timestamp': [0, 2, 20, 24, 27, 38]
                                 })
 
-        y_test = tds.predict_proba(df_test[['event', 'timestamp']].as_matrix())
+        y_test = tds.predict_proba(df_test[['event', 'timestamp']].values)
 
         # then
         y_true = [1, 0.5, 0, 0, 0, 1]
@@ -136,13 +136,13 @@ class TestTimeDurationSequenceMiner(unittest.TestCase):
 
         # when
         tds = TimeDurationSequenceMiner()
-        tds.fit(df[['event', 'timestamp']].as_matrix())
+        tds.fit(df[['event', 'timestamp']].values)
 
         df_test = pd.DataFrame({'event': ['a', 'b', 'b', 'a', 'b', 'a'],
                                 'timestamp': [0, 2, 20, 24, 27, 38]
                                 })
 
-        y_test = tds.predict(df_test[['event', 'timestamp']].as_matrix())
+        y_test = tds.predict(df_test[['event', 'timestamp']].values)
 
         # then
         y_true = [True, False, False, False, False, True]
@@ -158,13 +158,13 @@ class TestMetaSequenceMiner(unittest.TestCase):
 
         # when
         metaseqminer = MetaSequenceMiner()
-        metaseqminer.fit(df[['event', 'timestamp']].as_matrix())
+        metaseqminer.fit(df[['event', 'timestamp']].values)
 
         df_test = pd.DataFrame({'event': ['a', 'b', 'b', 'a', 'b', 'a'],
                                 'timestamp': [0, 2, 20, 24, 27, 38]
                                 })
 
-        y_test = metaseqminer.predict_proba(df_test[['event', 'timestamp']].as_matrix())
+        y_test = metaseqminer.predict_proba(df_test[['event', 'timestamp']].values)
 
         # then
         y_true = [1.0, 0.45, 0.22, 0.28, 0.22, 0.78]

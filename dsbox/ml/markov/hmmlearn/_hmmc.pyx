@@ -1,4 +1,5 @@
 # cython: language_level=3, boundscheck=False, wraparound=False
+# define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
 from cython cimport view
 from numpy.math cimport expl, logl, log1pl, isinf, fabsl, INFINITY
@@ -6,6 +7,7 @@ from numpy.math cimport expl, logl, log1pl, isinf, fabsl, INFINITY
 import numpy as np
 
 ctypedef double dtype_t
+
 
 
 cdef inline int _argmax(dtype_t[:] X) nogil:

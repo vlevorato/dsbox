@@ -91,7 +91,7 @@ class CategoricalProjector(BaseEstimator, TransformerMixin):
 
         for cat_col in self.categories_to_project:
             for cont_col in self.continous_cols:
-                X_result[operation_name + '_{}_per_{}'.format(cont_col, cat_col)] = \
+                X_result.loc[:, operation_name + '_{}_per_{}'.format(cont_col, cat_col)] = \
                     project_continuous_on_categorical(X, cat_col, cont_col, operation=self.operation)
 
         return X_result

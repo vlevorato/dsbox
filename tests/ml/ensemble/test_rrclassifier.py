@@ -25,7 +25,7 @@ class TestRRClassifier(unittest.TestCase):
         X_train, X_test, y_train, y_test = train_test_split(X.data, X.target, test_size=0.33, stratify=X.target,
                                                             random_state=42)
         # when
-        clf = RRForestClassifier(random_state=42)
+        clf = RRForestClassifier(n_estimators=10, random_state=42)
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
 
@@ -42,7 +42,7 @@ class TestRRClassifier(unittest.TestCase):
         X_train, X_test, y_train, y_test = train_test_split(X.data, X.target, test_size=0.33, stratify=X.target,
                                                             random_state=42)
         # when
-        clf = RRExtraTreesClassifier(random_state=42)
+        clf = RRExtraTreesClassifier(n_estimators=10, random_state=42)
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
 

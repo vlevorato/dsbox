@@ -15,7 +15,7 @@ class BinaryCalibratorTest(unittest.TestCase):
         y[2] = 1
         y[3] = 1
 
-        bin_calib = BinaryCalibrator(RandomForestClassifier())
+        bin_calib = BinaryCalibrator(RandomForestClassifier(n_estimators=10))
         bin_calib.fit(X, y)
 
         self.assertEqual(bin_calib.major_class_amount_, 98)
@@ -30,7 +30,7 @@ class BinaryCalibratorTest(unittest.TestCase):
         y[2] = 1
         y[3] = 1
 
-        bin_calib = BinaryCalibrator(RandomForestClassifier())
+        bin_calib = BinaryCalibrator(RandomForestClassifier(n_estimators=10))
         bin_calib.fit(X, y)
 
         self.assertEqual(len(bin_calib.X_), 4)
@@ -49,7 +49,7 @@ class BinaryCalibratorTest(unittest.TestCase):
         X_train = pd.DataFrame(X_train)
         X_test = pd.DataFrame(X_test)
 
-        bin_calib = BinaryCalibrator(RandomForestClassifier(random_state=seed))
+        bin_calib = BinaryCalibrator(RandomForestClassifier(random_state=seed, n_estimators=10))
         bin_calib.fit(X_train, y_train)
 
         y_pred = bin_calib.predict_proba(X_test)

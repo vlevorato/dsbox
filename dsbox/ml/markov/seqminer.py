@@ -147,7 +147,7 @@ class MarkovSequenceMiner(BaseEstimator):
             self.compute_probas_[0, :] = self.init_vector
             self.cur_vector = np.zeros(len(self.labels_))
             self.cur_vector[self.inv_dict_labels_[x[0]]] = 1
-            self.cur_vector = np.matrix(self.cur_vector)
+            self.cur_vector = self.cur_vector.reshape(1, len(self.cur_vector))
             self.chained_p_ = np.ones(len(x))
             self.transition_p_ = np.ones(len(x))
 

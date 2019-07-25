@@ -98,7 +98,8 @@ class TestLSH(unittest.TestCase):
         # then
 
         candidates_expected = [[4, 1, 2, 3], [7, 6, 4, 1, 2, 3, 5]]
-        self.assertListEqual(candidates_expected, candidates)
+        self.assertSetEqual(set(candidates_expected[0]), set(candidates[0]))
+        self.assertSetEqual(set(candidates_expected[1]), set(candidates[1]))
 
         # just for displaying test results
         """for i in range(0, len(texts_to_compare)):
