@@ -65,7 +65,7 @@ def mad_outliers(x, cutoff=2, z_score_coeff=0.6745):
     """
     mad_value = median_absolute_deviation(x)
     if mad_value == 0:
-        raise ZeroDivisionError("Median Absolute Deviation is equal to zero.")
+        return x * np.nan
 
     x_mad = (z_score_coeff * np.abs(x - np.median(x))) / mad_value
     return x_mad > cutoff
