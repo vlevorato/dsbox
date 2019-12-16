@@ -145,6 +145,42 @@ def mean_absolute_percentage_error(y_true, y_pred):
     return np.mean(np.ma.masked_invalid(np.abs((y_true - y_pred) / y_true)))
 
 
+def symmetric_mean_absolute_percentage_error(y_true, y_pred):
+    """ Symmetric Mean Absolute Percentage Error
+
+    Parameters
+    ----------
+    y_true : 1d array-like, or label indicator array / sparse matrix
+        Ground truth (correct) labels.
+
+    y_pred : 1d array-like, or label indicator array / sparse matrix
+        Predicted labels, as returned by a classifier.
+
+    Returns
+    -------
+    score : float
+    """
+    return np.mean(np.ma.masked_invalid(np.abs((y_true - y_pred) / ((y_true + y_pred) / 2))))
+
+
+def symmetric_root_mean_squared_percentage_error(y_true, y_pred):
+    """ Symetric Root Mean Square Percentage Error
+
+    Parameters
+    ----------
+    y_true : 1d array-like, or label indicator array / sparse matrix
+        Ground truth (correct) labels.
+
+    y_pred : 1d array-like, or label indicator array / sparse matrix
+        Predicted labels, as returned by a classifier.
+
+    Returns
+    -------
+    score : float
+    """
+    return np.sqrt(np.mean(np.ma.masked_invalid(np.square((y_true - y_pred) / ((y_true + y_pred) / 2)))))
+
+
 def precision_with_fixed_recall(y_true, y_pred_proba, fixed_recall):
     """ Compute precision with a fixed recall, for class 1. The chosen threshold for this couple precision is also returned.
 
