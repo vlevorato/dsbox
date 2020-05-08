@@ -54,15 +54,13 @@ def get_dag_roots(dag):
     return roots
 
 
-def execute_dag(dag, verbose=False):
+def execute_dag(dag, verbose=False, mode='downstream'):
     task_list = []
     roots = dag.roots
 
     for root in roots:
-        sub_task_list = breadth_first_search_task_list(root, task_list)
+        sub_task_list = breadth_first_search_task_list(root, task_list, mode=mode)
         task_list = sub_task_list + task_list
-
-    task_list.reverse()
 
     for task in task_list:
         if verbose:
@@ -140,7 +138,13 @@ def format_dict_path_items(dictionary, replace_value):
             dictionary[k] = format_dict_path_items(v, replace_value)
         else:
             if isinstance(v, list):
-                dictionary[k] = [list_item.format(replace_value) for list_item in v]
+                formatted_list = []
+                for list_item in v:
+                    if type(list_item) == str:
+                        list_item = list_item.format(replace_value)
+                    formatted_list.append(list_item)
+                dictionary[k] = formatted_list
             else:
-                dictionary[k] = dictionary[k].format(replace_value)
+                if type(dictionary[k]) == str:
+                    dictionary[k] = dictionary[k].format(replace_value)
     return dictionary
