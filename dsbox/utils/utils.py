@@ -2,6 +2,7 @@ import gzip
 import pickle
 import networkx as nx
 import matplotlib.pyplot as plt
+from smart_open import open
 
 
 def breadth_first_search_task_list(task_root, task_list=[], mode='upstream'):
@@ -131,3 +132,15 @@ def pandas_downcast_numeric(df_to_downcast, float_type_to_downcast=("float64", "
     int_cols = [c for c in df_to_downcast.columns if df_to_downcast[c].dtype == int_type_to_downcast[0]]
     df_to_downcast[float_cols] = df_to_downcast[float_cols].apply(lambda x: x.astype(float_type_to_downcast[1]))
     df_to_downcast[int_cols] = df_to_downcast[int_cols].apply(lambda x: x.astype(int_type_to_downcast[1]))
+
+
+def format_dict_path_items(dictionary, replace_value):
+    for k, v in dictionary.items():
+        if isinstance(v, dict):
+            dictionary[k] = format_dict_path_items(v, replace_value)
+        else:
+            if isinstance(v, list):
+                dictionary[k] = [list_item.format(replace_value) for list_item in v]
+            else:
+                dictionary[k] = dictionary[k].format(replace_value)
+    return dictionary
