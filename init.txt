@@ -1,9 +1,0 @@
-export AIRFLOW_HOME=`pwd`/airflow
-
-PROJECT_PATH=/Users/vincentlevorato/Documents/Python/DSBox/
-PYTHONPATH="${PYTHONPATH}:$PROJECT_PATH"
-export PYTHONPATH
-
-#airflow initdb
-airflow webserver
-airflow scheduler

@@ -1,5 +1,9 @@
 import numpy as np
 
+__author__ = "Samuel Rochette"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 def compute_prediction_interval(model, data_eval, percentile=95):
     """

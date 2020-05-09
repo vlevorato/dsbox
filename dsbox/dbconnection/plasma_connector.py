@@ -1,10 +1,17 @@
+import warnings
+
 import numpy as np
 import pyarrow as pa
 import pyarrow.plasma as plasma
 
+__status__ = "Beta"
 
 class PlasmaConnector:
+    """
+    Based on PyArrow documentation
+    """
     def __init__(self, socket_name, manager_socket_name="", int_release_delay=0):
+        warnings.warn("beta version", Warning)
         self.socket_name = socket_name
         self.manager_socket_name = manager_socket_name
         self.int_release_delay = int_release_delay

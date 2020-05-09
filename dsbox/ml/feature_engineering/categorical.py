@@ -1,6 +1,10 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 import types
 
+__author__ = "Vincent Levorato, Eric Biernat"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 def project_continuous_on_categorical(dataframe, cat_col, cont_col, operation='mean'):
     return dataframe.groupby(cat_col)[cont_col].transform(operation)

@@ -4,6 +4,10 @@ from dsbox.ml.markov.histrogramdata import HistogramData
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import column_or_1d, check_is_fitted
 
+__author__ = "Vincent Levorato, Michel Lutz"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 class MarkovSequenceMiner(BaseEstimator):
     """ Simple Markov Chain model.

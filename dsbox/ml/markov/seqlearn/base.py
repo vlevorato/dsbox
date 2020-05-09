@@ -9,6 +9,8 @@ pyximport.install(setup_args={'include_dirs': np.get_include()})
 from ._decode import DECODERS
 from ._utils import atleast2d_or_csr, safe_sparse_dot, validate_lengths
 
+__credits__ = "Lars Buitinck"
+
 
 # XXX Should we even derive from ClassifierMixin here?
 # We override all the methods.

@@ -1,5 +1,3 @@
-from distutils.version import LooseVersion
-
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator
@@ -7,6 +5,10 @@ from sklearn.base import BaseEstimator
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier, _tree
+
+__author__ = "Romain Ayres, Veltin Dupont, Matthieu Lagacherie, Vincent Levorato"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
 
 
 class FeatureContributions(BaseEstimator):

@@ -1,5 +1,9 @@
 from collections import OrderedDict
 
+__author__ = "Vincent Levorato"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 class HistogramData:
     """

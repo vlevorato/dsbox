@@ -1,3 +1,8 @@
+__author__ = "Vincent Levorato"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
+
 def shinglelize(text, shingle_size=3):
     """
     Transform an input string to a list of shingles (or n-grams) with a given size.

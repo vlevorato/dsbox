@@ -1,5 +1,7 @@
 import numpy as np
 
+__credits__ = "https://github.com/tmadl/sklearn-random-rotation-ensembles"
+
 
 def random_rot_mat_incl_flip(n):
     r = np.random.normal(size=(n, n))

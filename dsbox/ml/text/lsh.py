@@ -10,6 +10,10 @@ from dsbox.ml.text.utils import shinglelize
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array, check_is_fitted
 
+__author__ = "Vincent Levorato"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 class LSH(BaseEstimator):
     """ Local Sensitive Hashing classifier for texts.

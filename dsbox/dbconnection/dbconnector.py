@@ -6,6 +6,10 @@ import sqlalchemy
 
 
 class DBconnector():
+    """
+    Simple DB connector to write pandas dataframe to RDBMS table or to read from a table to a pandas dataframe.
+    """
+
     def __init__(self, username, password, hostname, port, dbname, baseprotocol=''):
         self.username = username
         self.password = password
@@ -31,25 +35,17 @@ class DBconnector():
 
 
 class DBconnectorPG(DBconnector):
+    """
+        Specialized Postgres DB connector to write pandas dataframe to RDBMS table or to read from a table to a pandas dataframe.
+        Using bulk operations.
+    """
+
     def __init__(self, username, password, hostname, port, dbname):
         super(DBconnectorPG, self).__init__(username, password, hostname, port, dbname, baseprotocol='postgres://')
 
         self.con = pg.connect(user=self.username, password=self.password,
                               host=self.hostname, port=self.port, dbname=self.dbname)
         self.con.autocommit = True
-
-    def _bulk_to_pg_old(self, df, table_name, to_pg_drop=False, null_value='NULL'):
-        data = io.StringIO()
-        df.to_csv(data, header=False, index=False, na_rep=null_value, sep=',')
-        data.seek(0)
-        curs = self.con.cursor()
-        if to_pg_drop:
-            curs.execute("DROP TABLE IF EXISTS " + table_name)
-            empty_table = pd.io.sql.get_schema(df, table_name, con=self.engine)
-            empty_table = empty_table.replace('"', '')
-            curs.execute(empty_table)
-        curs.copy_from(data, table_name, sep=',', null=null_value)
-        curs.connection.commit()
 
     def bulk_to_pg(self, df, table_name, to_pg_drop=False):
         data = io.StringIO()

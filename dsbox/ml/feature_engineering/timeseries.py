@@ -3,6 +3,10 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 import types
 
+__author__ = "Vincent Levorato"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 class Shifter(BaseEstimator, TransformerMixin):
     """

@@ -1,11 +1,14 @@
 """Hidden Markov models (HMMs) with supervised training."""
 
+# Copyright 2013 Lars Buitinck
+
 import numpy as np
 from scipy.special import logsumexp
 
 from dsbox.ml.markov.seqlearn.base import BaseSequenceClassifier
 from dsbox.ml.markov.seqlearn._utils import atleast2d_or_csr, count_trans, safe_sparse_dot
 
+__credits__ = "Lars Buitinck"
 
 class MultinomialHMM(BaseSequenceClassifier):
     """First-order hidden Markov model with multinomial event model.

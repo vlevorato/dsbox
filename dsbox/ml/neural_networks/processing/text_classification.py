@@ -5,6 +5,10 @@ from nltk.tokenize import TreebankWordTokenizer
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted, column_or_1d
 
+__author__ = "Vincent Levorato"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 class Text2Sequence(BaseEstimator, TransformerMixin):
     """

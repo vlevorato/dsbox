@@ -10,6 +10,8 @@ from dsbox.ml.markov.seqlearn.base import BaseSequenceClassifier
 from dsbox.ml.markov.seqlearn._utils import (atleast2d_or_csr, check_random_state, count_trans,
                      make_trans_matrix, safe_add, safe_sparse_dot)
 
+__credits__ = "Lars Buitinck"
+
 
 class StructuredPerceptron(BaseSequenceClassifier):
     """Structured perceptron for sequence classification.

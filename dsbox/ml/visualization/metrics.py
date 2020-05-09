@@ -4,6 +4,10 @@ import pandas as pd
 
 from sklearn.metrics import roc_curve, auc
 
+__author__ = "Aurélien Massiot"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 def plot_confusion_matrix(confusion_matrix, classes_list, normalize=True, figsize=(10, 7), fontsize=14, cmap="Blues"):
     """

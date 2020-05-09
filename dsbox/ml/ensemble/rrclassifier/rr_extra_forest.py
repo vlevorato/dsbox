@@ -7,6 +7,7 @@ from sklearn.ensemble.base import _partition_estimators
 from sklearn.externals.joblib import Parallel, delayed
 from scipy.stats.mstats_basic import mquantiles
 
+__credits__ = "https://github.com/tmadl/sklearn-random-rotation-ensembles"
 
 def _parallel_helper(obj, methodname, *args, **kwargs):
     """Private helper to workaround Python 2 pickle limitations"""

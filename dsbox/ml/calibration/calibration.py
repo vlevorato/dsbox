@@ -4,6 +4,10 @@ from dsbox.ml.utils import check_estimator_predict_proba
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils.validation import check_X_y, check_is_fitted, check_array
 
+__author__ = "Vincent Levorato"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 class BinaryCalibrator(BaseEstimator, ClassifierMixin):
     """ Probability calibration using Bayes Minimum Risk theory to calibrate prediction 

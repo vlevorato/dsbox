@@ -5,6 +5,10 @@ from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils.validation import check_is_fitted
 
+__author__ = "Vincent Levorato"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 class TextNeuralNetPipeline(BaseEstimator, ClassifierMixin):
     """

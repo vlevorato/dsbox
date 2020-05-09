@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+__author__ = "Samuel Rochette"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 def plot_eval_prediction_interval(target_eval, prediction, lower_error_list, upper_error_list, figsize=(10, 7)):
     """

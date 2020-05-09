@@ -1,6 +1,9 @@
 import random
 import numpy as np
 
+__author__ = "Vincent Levorato"
+__license__ = "Apache 2.0"
+
 
 def greedy_feature_selection(X_train, X_test, y_train, y_test, model, columns, score_func, shuffle=False):
     """

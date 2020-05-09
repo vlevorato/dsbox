@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt
 import scipy.stats as st
 from mpl_toolkits.mplot3d import Axes3D
 
+__author__ = "Vincent Levorato"
+__credits__ = "Madalina Ciortan"
+__source__ = "https://towardsdatascience.com/simple-example-of-2d-density-plots-in-python-83b83b934f67"
+__license__ = "Apache 2.0"
+
 
 def plot_gaussian_density(X, dimensions=2):
     """

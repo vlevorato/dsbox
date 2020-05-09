@@ -1,5 +1,9 @@
 import numpy as np
 
+__author__ = "Vincent Levorato"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 def mean_absolute_deviation(x):
     """

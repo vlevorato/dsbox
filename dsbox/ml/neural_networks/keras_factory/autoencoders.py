@@ -7,6 +7,10 @@ from keras.losses import mse, binary_crossentropy
 from keras.models import Model
 from sklearn.base import BaseEstimator, ClassifierMixin
 
+__author__ = "Vincent Levorato"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 __source__ = "https://blog.keras.io/building-autoencoders-in-keras.html"
 
 

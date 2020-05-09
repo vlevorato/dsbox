@@ -16,6 +16,10 @@ from sklearn.utils.validation import check_is_fitted, column_or_1d
 
 from scipy.stats import norm
 
+__author__ = "Vincent Levorato, Rémy Frenoy"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 class CovarianceOutliers(BaseEstimator):
     """ Covariance wrapper outlier estimator.

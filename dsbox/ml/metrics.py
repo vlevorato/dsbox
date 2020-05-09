@@ -3,6 +3,10 @@ import collections
 import numpy as np
 from sklearn.metrics import mean_squared_error, precision_recall_curve, recall_score, precision_score
 
+__author__ = "Vincent Levorato"
+__credits__ = "https://github.com/octo-technology/bdacore"
+__license__ = "Apache 2.0"
+
 
 def generalized_jaccard_similarity_score(y_true, y_pred):
     """ Generalized Jaccard similarity score
