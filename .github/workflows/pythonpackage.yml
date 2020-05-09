@@ -40,5 +40,5 @@ jobs:
       run: |
         python -m unittest -f discover -s tests/ml
     - name: Test Utils with unittest
-        run: |
-          python -m unittest -f discover -s tests/utils
+      run: |
+        python -m unittest -f discover -s tests/utils
