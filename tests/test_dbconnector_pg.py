@@ -1,4 +1,6 @@
+import os
 import unittest
+from unittest import skipUnless
 
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -7,6 +9,10 @@ from tests.config import test_user, test_dbname, test_hostname, test_password, t
 from dsbox.dbconnection.dbconnector import DBconnectorPG
 
 
+@skipUnless(
+    os.getenv('WITH_DB_TESTS'),
+    'Please set environment variable WITH_DB_TESTS to enable these tests'
+)
 class TestDBConnectorPG(unittest.TestCase):
 
     def test_write_df_to_table_with_to_pg_parameter(self):
@@ -16,7 +22,7 @@ class TestDBConnectorPG(unittest.TestCase):
                            'trip_cost': [134.6, 234, 85.67]})
 
         dbconn = DBconnectorPG(username=test_user, password=test_password, hostname=test_hostname, port=test_port,
-                             dbname=test_dbname)
+                               dbname=test_dbname)
 
         # when
         dbconn.bulk_to_pg(df, 'db.data_town', to_pg_drop=True)
@@ -30,7 +36,7 @@ class TestDBConnectorPG(unittest.TestCase):
                                 'country': ['France', 'USA', 'Italy'],
                                 'trip_cost': [134.6, 234, 85.67]})
         dbconn = DBconnectorPG(username=test_user, password=test_password, hostname=test_hostname, port=test_port,
-                             dbname=test_dbname)
+                               dbname=test_dbname)
 
         # when
         df_returned = dbconn.bulk_from_pg('db.data_town')

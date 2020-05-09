@@ -1,4 +1,6 @@
+import os
 import unittest
+from unittest import skipUnless
 
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -7,6 +9,10 @@ from tests.config import test_user, test_dbname, test_hostname, test_password, t
 from dsbox.dbconnection.dbconnector import DBconnector
 
 
+@skipUnless(
+    os.getenv('WITH_DB_TESTS'),
+    'Please set environment variable WITH_DB_TESTS to enable these tests'
+)
 class TestDBConnector(unittest.TestCase):
 
     def test_write_df_to_table(self):
