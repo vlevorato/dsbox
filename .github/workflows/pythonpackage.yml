@@ -38,7 +38,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test ML with unittest
       run: |
-        python -m unittest -f discover -s tests/ml
+        python -m unittest discover -s tests/ml
     - name: Test Utils with unittest
       run: |
-        python -m unittest -f discover -s tests/utils
+        python -m unittest discover -s tests/utils
