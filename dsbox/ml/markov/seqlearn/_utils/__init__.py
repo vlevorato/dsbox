@@ -47,7 +47,7 @@ def array2d(X, dtype=None, order=None, copy=False):
     X_2d = np.asarray(np.atleast_2d(X), dtype=dtype, order=order)
     _assert_all_finite(X_2d)
     if X is X_2d and copy:
-        X_2d = safe_copy(X_2d)
+        X_2d = np.copy(X_2d)
     return X_2d
 
 
