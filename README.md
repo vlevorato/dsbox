@@ -1,3 +1,5 @@
+[![PyPI version](https://badge.fury.io/py/ds-box.svg)](https://badge.fury.io/py/ds-box)
+
 # DS Box
 <p align="center">
 <img width="10%" src="https://user-images.githubusercontent.com/17388898/81501373-51baa880-92d8-11ea-8b96-d461bee1d21e.png">
