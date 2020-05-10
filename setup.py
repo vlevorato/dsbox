@@ -6,7 +6,7 @@ setup(
     author='Vincent Levorato',
     author_email='vincent.levorato@gmail.com',
     url='https://github.com/vlevorato/dsbox',
-    packages=['dsbox', 'dsbox.ml', 'dsbox.operators'],
+    packages=['dsbox'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: Apache 2.0",
