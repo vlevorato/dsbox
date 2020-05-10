@@ -93,8 +93,23 @@ My_process:
     pandas_write_function_name: to_parquet
 ```
 
-_About copyrights on ML part_: some code has been re-packaged from existing libraries which are not or fewly maintained, and for which I could have been involved in the past. All licences are respected and original authors and repos quoted.
-
-
+## Machine Learning part
  
+This part is a humble contribution to accelerate Data Scientists recurrent operations, like for instance building lagged features for times series or exporting model features contribution. All the code produced here is Pandas and Scikit-learn friendly, as nearly everything is defined as a sklearn estimator.
+ 
+ Subpackage | Description
+------------ | -------------
+Calibration | calibration model techniques
+Ensemble | some ensemble models
+Explain | model explanation methods
+Feature_engineering | some categorical and time series pre-built feature engineering
+Feature_selection | some feature selection methods
+Markov | simple markov chains, supervised and unsupervised Hidden Markov Models
+Neural_networks | end-to-end NN architectures
+Outliers | some outlier detections techniques (MAD, FFT, Gaussian Process, etc.)
+Text | some NLP models
+Visualization | some pre-built function to display common graphics
+
+
+_About copyrights on ML part_: some code has been re-packaged from existing libraries which are not or fewly maintained, and for which I could have been involved in the past. All licences are respected, all original authors and repos are quoted.
 
