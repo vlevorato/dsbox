@@ -1,12 +1,18 @@
-from setuptools import setup
+import setuptools
 
-setup(
-    name="DS Box",
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
+    name="ds-box",
     version=1.3,
     author='Vincent Levorato',
     author_email='vincent.levorato@gmail.com',
     url='https://github.com/vlevorato/dsbox',
-    packages=['dsbox'],
+    description="Package made to accelerate data science workflows in production.",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: Apache 2.0",
