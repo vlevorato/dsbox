@@ -5,6 +5,7 @@ setup(
     version=1.3,
     author='Vincent Levorato',
     author_email='vincent.levorato@gmail.com',
+    url='https://github.com/vlevorato/dsbox',
     packages=['dsbox', 'dsbox.ml', 'dsbox.operators'],
     classifiers=[
         "Programming Language :: Python :: 3",
