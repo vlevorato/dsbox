@@ -10,7 +10,6 @@ from dsbox.examples.tree_disease_usecase.ml.modeling import fit_write_model, rea
 from dsbox.examples.tree_disease_usecase.ml.sub_dags import feature_engineering_sub_dag
 from dsbox.operators.data_operator import DataOperator
 from dsbox.operators.data_unit import DataInputFileUnit, DataOutputFileUnit, DataInputMultiFileUnit, DataOutputDBUnit
-from dsbox.utils import execute_dag, plot_dag
 from dsbox.utils import FilenameGenerator
 
 db_url = 'sqlite:///tree_disease.db'
@@ -160,7 +159,3 @@ task_purge_temp_files = BashOperator(task_id='Purge_temp_files',
                                      dag=dag)
 
 task_export_to_sqlite.set_downstream(task_purge_temp_files)
-
-# for local execution
-#plot_dag(dag)
-execute_dag(dag, verbose=True)

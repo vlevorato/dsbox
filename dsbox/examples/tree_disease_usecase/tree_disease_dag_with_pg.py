@@ -151,7 +151,3 @@ task_purge_temp_files = BashOperator(task_id='Purge_temp_files',
                                      dag=dag)
 
 task_export_to_psql.set_downstream(task_purge_temp_files)
-
-# for local execution
-# plot_dag(dag)
-# execute_dag(dag, verbose=True)

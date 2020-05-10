@@ -2,15 +2,13 @@ from datetime import datetime
 import os
 
 from airflow import DAG
-from airflow.operators.bash_operator import BashOperator
 
 from dsbox.examples.sales_prediction_usecase.ml.feature_engineering import concat_train_test, resample_fillna, \
     create_simple_features, create_timeseries_rolling_features, create_timeseries_shift_features, \
     create_timeseries_diff_shift_features, merge_time_features, extra_features, merge_final_features
 from dsbox.examples.sales_prediction_usecase.ml.modeling import train_model, metrics_model, predict_model
 from dsbox.operators.data_operator import DataOperator
-from dsbox.operators.data_unit import DataInputFileUnit, DataOutputFileUnit, DataInputMultiFileUnit, DataOutputDBUnit
-from dsbox.utils import execute_dag, plot_dag
+from dsbox.operators.data_unit import DataInputFileUnit, DataOutputFileUnit, DataInputMultiFileUnit
 
 """
 This usecase is taken from the Kaggle Rossmann challenge.
@@ -214,8 +212,3 @@ task_predict = DataOperator(operation_function=predict_model,
                             dag=dag, task_id='Prediction')
 
 task_train_model.set_downstream(task_predict)
-
-# for local execution
-# plot_dag(dag)
-execute_dag(dag, verbose=True)
-# dag.task_dict['Prediction'].execute(dag.get_template_env())
