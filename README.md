@@ -9,6 +9,12 @@ This package provides:
 * specific **Operators for Apache Airflow** in order to manage Data Science workflows
 * propose a **bunch of algorithms and routines** complementary to Data Science usual packages
 
+## Install
+
+DSbox can be installed from PyPI or by cloning this repo, and adding it to your project path.
+```
+pip install ds-box
+```
 
 ## Airflow Operators and Data Units
 
