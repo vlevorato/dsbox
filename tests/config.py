@@ -1,12 +1,13 @@
+import os
 import pyarrow.plasma as plasma
 
-test_user = 'vle'
-test_password = 'tototo'
-test_hostname = '192.168.253.161'
-test_port = 5432
-test_dbname = 'postgres'
+test_user = os.environ.get(['TEST_DSBOX_PG_USER'])
+test_password = os.environ.get(['TEST_DSBOX_PG_PASSWD'])
+test_hostname = os.environ.get(['TEST_DSBOX_PG_HOST'])
+test_port = os.environ.get(['TEST_DSBOX_PG_PORT'])
+test_dbname = os.environ.get(['TEST_DSBOX_PG_DBNAME'])
 
-socket_name="/tmp/plasma"
+socket_name = os.environ.get(['TEST_DSBOX_PLASMA_SOCKET_NAME'])
 
 id = bytes([0x01] * 20)
-object_id=plasma.ObjectID(id)
+object_id = plasma.ObjectID(id)
