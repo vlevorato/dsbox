@@ -4,6 +4,7 @@ __author__ = "Vincent Levorato"
 __credits__ = "https://github.com/octo-technology/bdacore"
 __license__ = "Apache 2.0"
 
+
 class KerasFactory:
     """
     Abstract class template for all keras neural nets factories

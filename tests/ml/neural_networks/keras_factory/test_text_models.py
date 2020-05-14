@@ -2,8 +2,9 @@ import logging
 import unittest
 
 import numpy as np
-from keras.utils import np_utils
+
 from keras.wrappers.scikit_learn import KerasClassifier
+from tensorflow.python.keras.utils.np_utils import to_categorical
 
 logging.getLogger("tensorflow").setLevel(logging.WARNING)
 
@@ -32,7 +33,7 @@ class TestKerasTextModels(unittest.TestCase):
             ids = [dummy_hash_function(token) for token in x_train[i].split(' ')]
             ids_x_train[i, :] = ids
         num_labels = 2
-        y_enc = np_utils.to_categorical(y_train, num_labels)
+        y_enc = to_categorical(y_train, num_labels)
         dictionary_size = np.int(np.max(ids_x_train) + 1)
 
         # when

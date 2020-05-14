@@ -2,7 +2,7 @@ import logging
 import unittest
 
 import numpy as np
-from keras.datasets import mnist
+from tensorflow.keras.datasets import mnist
 
 from dsbox.ml.neural_networks.keras_factory.autoencoders import DeepAutoEncoderFactory, AutoEncoderClassifier
 

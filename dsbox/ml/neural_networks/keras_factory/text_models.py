@@ -1,11 +1,12 @@
 from dsbox.ml.neural_networks import KerasFactory
-from keras.layers import Dense, Activation, Embedding, LSTM
-from keras.layers import Dropout, Conv1D, MaxPooling1D
-from keras.models import Sequential
+from tensorflow.keras.layers import Dense, Activation, Embedding, LSTM
+from tensorflow.keras.layers import Dropout, Conv1D, MaxPooling1D
+from tensorflow.keras.models import Sequential
 
 __author__ = "Vincent Levorato"
 __credits__ = "https://github.com/octo-technology/bdacore"
 __license__ = "Apache 2.0"
+
 
 class LSTMFactory(KerasFactory):
     def create_model(self, dictionary_size, num_labels=2):

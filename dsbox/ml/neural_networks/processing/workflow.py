@@ -1,9 +1,9 @@
 from dsbox.ml.neural_networks import KerasFactory
 from dsbox.ml.neural_networks.processing import Text2Sequence
-from keras.utils import np_utils
-from keras.wrappers.scikit_learn import KerasClassifier
+from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils.validation import check_is_fitted
+from tensorflow.python.keras.utils.np_utils import to_categorical
 
 __author__ = "Vincent Levorato"
 __credits__ = "https://github.com/octo-technology/bdacore"
@@ -82,7 +82,7 @@ class TextNeuralNetPipeline(BaseEstimator, ClassifierMixin):
         """
 
         x = self.text2seq.fit_transform(X)
-        y_enc = np_utils.to_categorical(y, self.num_labels)
+        y_enc = to_categorical(y, self.num_labels)
 
         self.model_ = KerasClassifier(build_fn=self.factory.create_model,
                                       dictionary_size=self.text2seq.dictionary_size_,

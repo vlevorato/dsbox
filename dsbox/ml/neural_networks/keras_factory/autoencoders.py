@@ -1,10 +1,11 @@
 import numpy as np
 from dsbox.ml.neural_networks import KerasFactory
-from keras import backend as K
-from keras import regularizers
-from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, Lambda
-from keras.losses import mse, binary_crossentropy
-from keras.models import Model
+
+from tensorflow.keras import backend as K
+from tensorflow.keras import regularizers
+from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, Lambda
+from tensorflow.keras.losses import mse, binary_crossentropy
+from tensorflow.keras.models import Model
 from sklearn.base import BaseEstimator, ClassifierMixin
 
 __author__ = "Vincent Levorato"

@@ -5,11 +5,11 @@ from dsbox.ml.neural_networks.processing import Text2Sequence
 from nltk.stem.snowball import EnglishStemmer
 
 import logging
+
 logging.getLogger("tensorflow").setLevel(logging.WARNING)
 
-
-
 np.random.seed(42)
+
 
 class TestText2Sequence(unittest.TestCase):
     def test_TestText2Sequence_fit_and_transform_should_return_correct_sequences(self):
@@ -27,7 +27,6 @@ class TestText2Sequence(unittest.TestCase):
         self.assertEqual(sequences[0][2], sequences[1][2])
         self.assertNotEqual(sequences[0][3], sequences[1][3])
         self.assertEqual(sequences[0][4], sequences[1][4])
-
 
 
 if __name__ == '__main__':
