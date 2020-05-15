@@ -6,7 +6,7 @@ import numpy as np
 import logging
 
 from dsbox.ml.neural_networks.keras_factory.text_models import LSTMFactory
-from dsbox.ml.neural_networks.processing.workflow import TextNeuralNetPipeline
+from dsbox.ml.neural_networks.processing.workflow import TextNeuralNetPipeline, ImageNeuralNetPipeline
 
 logging.getLogger("tensorflow").setLevel(logging.WARNING)
 
@@ -49,3 +49,16 @@ class TestPipeline(unittest.TestCase):
 
         # then
         self.assertIsNotNone(y_pred)
+
+    def test_fit_image_nn_workflow_should_set_params_automatically(self):
+        # given
+        workflow = ImageNeuralNetPipeline(weights="imagenet")
+
+        # when
+        workflow.fit()
+
+        # then
+        self.assertTupleEqual((299, 299), workflow.img_size_)
+        self.assertEqual("block14_sepconv2_act", workflow.last_conv_layer_name_)
+        self.assertListEqual(["avg_pool", "predictions"], workflow.classifier_layer_names_)
+

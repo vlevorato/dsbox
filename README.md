@@ -88,7 +88,7 @@ and an example of the YAML data operations file that should be passed as ```data
 ```yaml
 My_process:
   operation_function:
-    module: myprojectmoduel.process
+    module: myprojectmodule.process
     name: my_function
   input_unit:
     type: DataInputFileUnit
