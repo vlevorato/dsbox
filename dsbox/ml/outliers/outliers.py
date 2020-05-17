@@ -3,7 +3,7 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 from dsbox.ml.outliers import fft_outliers, mad_outliers
-from sklearn.base import BaseEstimator, ClusterMixin
+from sklearn.base import BaseEstimator, ClusterMixin, OutlierMixin
 from sklearn.cluster import DBSCAN
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.covariance import EmpiricalCovariance, MinCovDet
@@ -14,7 +14,7 @@ from sklearn.mixture.base import BaseMixture
 from sklearn.neighbors.kde import KernelDensity
 from sklearn.utils.validation import check_is_fitted, column_or_1d
 
-from scipy.stats import norm
+from scipy.stats import norm, median_absolute_deviation
 
 __author__ = "Vincent Levorato, Rémy Frenoy"
 __credits__ = "https://github.com/octo-technology/bdacore"
@@ -376,7 +376,7 @@ class KMeansIterativeOneClusterOutliers(BaseEstimator):
 
     def __init__(self, kmoc_estimator=KMeansOneClusterOutliers(), n_iterations=5):
         if not isinstance(kmoc_estimator, KMeansOneClusterOutliers):
-            raise TypeError("Estimator must be a bdacore.outliers.KMeansOneClusterOutliers class")
+            raise TypeError("Estimator must be a dsbox.ml.outliers.KMeansOneClusterOutliers class")
 
         self.kmoc_estimator = kmoc_estimator
         self.n_iterations = n_iterations
@@ -701,15 +701,18 @@ class ClusteringOutliers(BaseEstimator):
         return probas > self.threshold
 
 
-class MADOutliers(BaseEstimator):
+class MADOutliers(OutlierMixin):
     """  Median Absolute Deviation outliers estimator
     
-    A simple scikit wrapper using bdacore.outliers.utils.mad_outliers method. See documentation for
+    A simple scikit wrappering method used in dsbox.ml.outliers.utils.mad_outliers. See documentation for
     further purpose.
     
     
     Parameters
     ----------
+
+    window: int, optional (default=None)
+        window size for MAD calculation, if None, window is equal to length of dataset
     
     cutoff : int, optional (default=2)
         amount of times residuals relative to the median exceed the ratio to the MAD
@@ -720,19 +723,18 @@ class MADOutliers(BaseEstimator):
     >>> import pandas as pd 
     >>> from dsbox.ml.outliers import MADOutliers
     
-    >>> df = pd.DataFrame([1, 0, 0, 1, 10, 2, 115, 110, 32, 16, 2, 0, 15, 1])
+    >>> df = pd.DataFrame({'values': [1, 0, 0, 1, 10, 2, 115, 110, 32, 16, 2, 0, 15, 1]})
     >>> mad_outliers = MADOutliers()
     >>> outliers = mad_outliers.fit_predict(df)
-    >>> outliers.values
-    array([False, False, False, False,  True, False,  True,  True,  True,
-            True, False, False,  True, False])
+    >>> outliers
+    array([ 1,  1,  1,  1, -1,  1, -1, -1, -1,  1,  1,  1, -1,  1])
     
     
     """
 
-    def __init__(self, cutoff=2, threshold=None):
+    def __init__(self, window=None, cutoff=2):
+        self.window = window
         self.cutoff = cutoff
-        self.threshold = threshold
 
     def fit(self, X, y=None):
         """
@@ -740,9 +742,7 @@ class MADOutliers(BaseEstimator):
         
         Parameters
         ----------
-        X : array-like, shape = [n_samples, n_features]
-          Training data, where n_samples is the number of samples
-          and n_features is the number of features.
+        X : pandas DataFrame
         y : not used, present for API consistence purpose.
         
         Returns
@@ -750,9 +750,14 @@ class MADOutliers(BaseEstimator):
         self : object
           Returns self.
         """
-        self.X_ = pd.DataFrame(columns=X.columns)
+        if self.window is None:
+            self.window = len(X)
+        self.X_ = pd.DataFrame()
         for column in X.columns:
-            self.X_[column] = mad_outliers(X[column], cutoff=self.cutoff)
+            self.X_['mad_{}'.format(column)] = X[column].rolling(self.window, min_periods=1).apply(median_absolute_deviation)
+            self.X_['median_{}'.format(column)] = X[column].rolling(self.window, min_periods=1).median()
+            self.X_[column] = (np.abs(X[column] - self.X_['median_{}'.format(column)]) / self.X_['mad_{}'.format(column)]) > self.cutoff
+            self.X_ = self.X_.drop(['mad_{}'.format(column), 'median_{}'.format(column)], axis=1)
 
         return self
 
@@ -762,7 +767,7 @@ class MADOutliers(BaseEstimator):
 
         Parameters
         ----------
-        X : array-like, shape = (n_samples, n_features)
+        X : not used, present for API consistence purpose.
 
         Returns
         -------
@@ -770,33 +775,25 @@ class MADOutliers(BaseEstimator):
 
         """
 
-        return self.X_.mean(axis=1)
+        return self.X_.mean(axis=1).values
 
     def predict(self, X):
         """
-        Returns a boolean tag for each element to be an outlier. It takes predict_proba method, 
-        and checks if it exceeds the threshold attribute.
+        Predict the labels (1 inlier, -1 outlier) of X according to MAD technique.
 
         Parameters
         ----------
-        X : array-like, shape = (n_samples, n_features)
+        X : not used, present for API consistence purpose.
 
         Returns
         -------
         Boolean array with outlier tag
         """
-        probas = self.predict_proba(X)
 
-        if self.threshold is None:
-            self.threshold = np.mean(probas)
-        return probas > self.threshold
-
-    def fit_predict(self, X):
-        self.fit(X)
-        return self.predict(X)
+        return self.X_.mean(axis=1).map(lambda x: -1 if x >= 0.5 else 1).values
 
 
-class FFTOutliers(BaseEstimator):
+class FFTOutliers(OutlierMixin):
     """  Fast Fourier Transformation outliers estimator
 
     A simple scikit wrapper using bdacore.outliers.utils.fft_outliers method. See documentation for

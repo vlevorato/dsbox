@@ -274,12 +274,11 @@ class WrappersTest(unittest.TestCase):
         df = pd.DataFrame([1, 0, 0, 1, 10, 2, 115, 110, 32, 16, 2, 0, 15, 1])
 
         # when
-        mad_outliers = MADOutliers(threshold=0.9)
+        mad_outliers = MADOutliers()
         outliers = mad_outliers.fit_predict(df)
 
         # then
-        outliers_true = [False, False, False, False, True, False, True, True, True, True, False, False
-            , True, False]
+        outliers_true = [1,  1,  1,  1, -1,  1, -1, -1, -1,  1,  1,  1, -1,  1]
 
         self.assertListEqual(outliers_true, outliers.tolist())
 
