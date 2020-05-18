@@ -804,11 +804,10 @@ class FFTOutliers(BaseEstimator, OutlierMixin):
 
     """
 
-    def __init__(self, freq_cut_index=None, outlier_proportion=0.1, window=None, threshold=None):
+    def __init__(self, freq_cut_index=None, outlier_proportion=0.1, threshold=None):
         self.freq_cut_index = freq_cut_index
         self.outlier_proportion = outlier_proportion
         self.threshold = threshold
-        self.window = window
 
     def fit(self, X=None, y=None):
         """
