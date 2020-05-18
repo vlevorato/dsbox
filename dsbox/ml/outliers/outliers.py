@@ -21,7 +21,7 @@ __credits__ = "https://github.com/octo-technology/bdacore"
 __license__ = "Apache 2.0"
 
 
-class CovarianceOutliers(BaseEstimator):
+class CovarianceOutliers(BaseEstimator, OutlierMixin):
     """ Covariance wrapper outlier estimator.
     
     Encapsulates sklearn covariance estimator to extract outliers from Mahalanobis squared distance.
@@ -51,12 +51,8 @@ class CovarianceOutliers(BaseEstimator):
     
     >>> X = pd.DataFrame([1, 0, 0, 1, 10, 2, 115, 110, 32, 16, 2, 0, 15, 1])
     >>> cov_outliers = CovarianceOutliers(MinCovDet())
-    >>> cov_outliers.fit(X)
-    CovarianceOutliers(cov_estimator=MinCovDet(assume_centered=False, random_state=None, store_precision=True,
-         support_fraction=None),
-              threshold=None)
-    >>> outliers = cov_outliers.predict(X)
-    >>> outliers.values
+    >>> outliers = cov_outliers.fit_predict(X)
+    >>> outliers
     array([False, False, False, False, False, False,  True,  True, False,
            False, False, False, False, False])
     
@@ -130,7 +126,7 @@ class CovarianceOutliers(BaseEstimator):
         return probas > self.threshold
 
 
-class GaussianProcessOutliers(BaseEstimator):
+class GaussianProcessOutliers(BaseEstimator, OutlierMixin):
     """ Gaussian Process wrapper outlier estimator
 
     Encapsulates sklearn Gaussian Process Regressor estimator to extract outliers which should be
@@ -159,11 +155,7 @@ class GaussianProcessOutliers(BaseEstimator):
     >>> df = pd.DataFrame(data)
     
     >>> gp_outliers = GaussianProcessOutliers(GaussianProcessRegressor(alpha=0.95, normalize_y=True), n_samples=100)
-    >>> gp_outliers.fit(df)
-    GaussianProcessOutliers(gp_estimator=GaussianProcessRegressor(alpha=0.95, copy_X_train=True, kernel=None,
-                 n_restarts_optimizer=0, normalize_y=True,
-                 optimizer='fmin_l_bfgs_b', random_state=None),
-                n_samples=100)
+    >>> _ = gp_outliers.fit(df)
     >>> outliers = gp_outliers.predict(df, confidence=0.999)
     >>> outlier_positions = np.argwhere(outliers == np.amax(outliers)).flatten().tolist()
     >>> outlier_positions
@@ -197,8 +189,7 @@ class GaussianProcessOutliers(BaseEstimator):
 
         y = column_or_1d(X)
         x = np.arange(0, y.size)
-        df_x = pd.DataFrame(x)
-        self.gp_estimator.fit(df_x, y)
+        self.gp_estimator.fit(x.reshape(-1, 1), y)
 
         return self
 
@@ -240,7 +231,7 @@ class GaussianProcessOutliers(BaseEstimator):
         return outliers
 
 
-class KMeansOneClusterOutliers(BaseEstimator):
+class KMeansOneClusterOutliers(BaseEstimator, OutlierMixin):
     """ KMeans One Cluster Outliers estimator
     
     This estimator uses distance information to categorize outliers. In this case, KMeans algorithm is used,
@@ -264,12 +255,7 @@ class KMeansOneClusterOutliers(BaseEstimator):
     
     >>> df = pd.DataFrame([1, 0, 0, 1, 10, 2, 115, 110, 32, 16, 2, 0, 15, 1])
     >>> kmoc_outliers = KMeansOneClusterOutliers()
-    >>> kmoc_outliers.fit(df)
-    KMeansOneClusterOutliers(kmeans_estimator=KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
-        n_clusters=1, n_init=10, n_jobs=-1, precompute_distances='auto',
-        random_state=None, tol=0.0001, verbose=0),
-                 threshold=None)
-    >>> outliers = kmoc_outliers.predict(df)
+    >>> outliers = kmoc_outliers.fit_predict(df)
     >>> outliers
     array([False, False, False, False, False, False,  True,  True, False,
            False, False, False, False, False])
@@ -345,7 +331,7 @@ class KMeansOneClusterOutliers(BaseEstimator):
         return probas > self.threshold
 
 
-class KMeansIterativeOneClusterOutliers(BaseEstimator):
+class KMeansIterativeOneClusterOutliers(BaseEstimator, OutlierMixin):
     """ KMeans Iterative One Cluster Outliers estimator
 
     This estimator uses iteratively KMeans One Cluster Outliers estimator to find outliers. It applies n times
@@ -418,7 +404,7 @@ class KMeansIterativeOneClusterOutliers(BaseEstimator):
         return outlier_iter
 
 
-class GMMOutliers(BaseEstimator):
+class GMMOutliers(BaseEstimator, OutlierMixin):
     """ Gaussian mixture model Outliers estimator
     
     This estimator uses density information to categorize outliers. In this case, GMM algorithm is used,
@@ -442,16 +428,7 @@ class GMMOutliers(BaseEstimator):
     
     >>> df = pd.DataFrame([1, 0, 0, 1, 10, 2, 115, 110, 32, 16, 2, 0, 15, 1])
     >>> gmm_outliers = GMMOutliers()
-    >>> gmm_outliers.fit(df)
-    GMMOutliers(gmm_estimator=BayesianGaussianMixture(covariance_prior=None, covariance_type='full',
-                degrees_of_freedom_prior=None, init_params='kmeans',
-                max_iter=100, mean_precision_prior=None, mean_prior=None,
-                n_components=1, n_init=1, random_state=None, reg_covar=1e-06,
-                tol=0.001, verbose=0, verbose_interval=10, warm_start=False,
-                weight_concentration_prior=None,
-                weight_concentration_prior_type='dirichlet_process'),
-          threshold=None)
-    >>> outliers = gmm_outliers.predict(df)
+    >>> outliers = gmm_outliers.fit_predict(df)
     >>> outliers
     array([False, False, False, False, False, False,  True,  True, False,
            False, False, False, False, False])
@@ -522,7 +499,7 @@ class GMMOutliers(BaseEstimator):
         return probas > self.threshold
 
 
-class ClusteringOutliers(BaseEstimator):
+class ClusteringOutliers(BaseEstimator, OutlierMixin):
     """ Clustering model Outliers estimator
 
     This estimator uses clustering information to categorize outliers. Depending on the strategy, this
@@ -567,15 +544,7 @@ class ClusteringOutliers(BaseEstimator):
     
     >>> df = pd.DataFrame([1, 0, 0, 1, 10, 2, 115, 110, 32, 16, 2, 0, 15, 1])
     >>> clustering_outliers = ClusteringOutliers(cluster_estimator=KMeans(n_clusters=2), strategy='size')
-    >>> clustering_outliers.fit(df)
-    ClusteringOutliers(cluster_estimator=KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
-        n_clusters=2, n_init=10, n_jobs=1, precompute_distances='auto',
-        random_state=None, tol=0.0001, verbose=0),
-              kernel_density=KernelDensity(algorithm='auto', atol=0, bandwidth=0.2, breadth_first=True,
-           kernel='epanechnikov', leaf_size=40, metric='euclidean',
-           metric_params=None, rtol=0),
-              strategy='size', threshold=None)
-    >>> outliers = clustering_outliers.predict(df)
+    >>> outliers = clustering_outliers.fit_predict(df)
     >>> outliers
     array([False, False, False, False, False, False,  True,  True, False,
            False, False, False, False, False])
@@ -701,7 +670,7 @@ class ClusteringOutliers(BaseEstimator):
         return probas > self.threshold
 
 
-class MADOutliers(OutlierMixin):
+class MADOutliers(BaseEstimator, OutlierMixin):
     """  Median Absolute Deviation outliers estimator
     
     A simple scikit wrappering method used in dsbox.ml.outliers.utils.mad_outliers. See documentation for
@@ -727,14 +696,16 @@ class MADOutliers(OutlierMixin):
     >>> mad_outliers = MADOutliers()
     >>> outliers = mad_outliers.fit_predict(df)
     >>> outliers
-    array([ 1,  1,  1,  1, -1,  1, -1, -1, -1,  1,  1,  1, -1,  1])
+    array([False, False, False, False,  True, False,  True,  True,  True,
+           False, False, False,  True, False])
     
     
     """
 
-    def __init__(self, window=None, cutoff=2):
+    def __init__(self, window=None, cutoff=2, threshold=None):
         self.window = window
         self.cutoff = cutoff
+        self.threshold = threshold
 
     def fit(self, X, y=None):
         """
@@ -754,9 +725,11 @@ class MADOutliers(OutlierMixin):
             self.window = len(X)
         self.X_ = pd.DataFrame()
         for column in X.columns:
-            self.X_['mad_{}'.format(column)] = X[column].rolling(self.window, min_periods=1).apply(median_absolute_deviation)
+            self.X_['mad_{}'.format(column)] = X[column].rolling(self.window, min_periods=1).apply(
+                median_absolute_deviation)
             self.X_['median_{}'.format(column)] = X[column].rolling(self.window, min_periods=1).median()
-            self.X_[column] = (np.abs(X[column] - self.X_['median_{}'.format(column)]) / self.X_['mad_{}'.format(column)]) > self.cutoff
+            self.X_[column] = (np.abs(X[column] - self.X_['median_{}'.format(column)]) / self.X_[
+                'mad_{}'.format(column)]) > self.cutoff
             self.X_ = self.X_.drop(['mad_{}'.format(column), 'median_{}'.format(column)], axis=1)
 
         return self
@@ -779,7 +752,8 @@ class MADOutliers(OutlierMixin):
 
     def predict(self, X):
         """
-        Predict the labels (1 inlier, -1 outlier) of X according to MAD technique.
+        Returns a boolean tag for each element to be an outlier. It takes predict_proba method,
+        and checks if it exceeds the threshold attribute.
 
         Parameters
         ----------
@@ -790,10 +764,14 @@ class MADOutliers(OutlierMixin):
         Boolean array with outlier tag
         """
 
-        return self.X_.mean(axis=1).map(lambda x: -1 if x >= 0.5 else 1).values
+        probas = self.predict_proba(X)
+
+        if self.threshold is None:
+            self.threshold = np.mean(probas)
+        return probas > self.threshold
 
 
-class FFTOutliers(OutlierMixin):
+class FFTOutliers(BaseEstimator, OutlierMixin):
     """  Fast Fourier Transformation outliers estimator
 
     A simple scikit wrapper using bdacore.outliers.utils.fft_outliers method. See documentation for
@@ -826,10 +804,11 @@ class FFTOutliers(OutlierMixin):
 
     """
 
-    def __init__(self, freq_cut_index=None, outlier_proportion=0.1, threshold=None):
+    def __init__(self, freq_cut_index=None, outlier_proportion=0.1, window=None, threshold=None):
         self.freq_cut_index = freq_cut_index
         self.outlier_proportion = outlier_proportion
         self.threshold = threshold
+        self.window = window
 
     def fit(self, X=None, y=None):
         """
@@ -889,7 +868,3 @@ class FFTOutliers(OutlierMixin):
         if self.threshold is None:
             self.threshold = np.mean(probas)
         return probas > self.threshold
-
-    def fit_predict(self, X):
-        self.fit(X)
-        return self.predict(X)

@@ -278,7 +278,8 @@ class WrappersTest(unittest.TestCase):
         outliers = mad_outliers.fit_predict(df)
 
         # then
-        outliers_true = [1,  1,  1,  1, -1,  1, -1, -1, -1,  1,  1,  1, -1,  1]
+        outliers_true = [False, False, False, False,  True, False,  True,  True,  True,
+           False, False, False,  True, False]
 
         self.assertListEqual(outliers_true, outliers.tolist())
 
