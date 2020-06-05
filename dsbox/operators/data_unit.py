@@ -95,7 +95,7 @@ class DataInputMultiFileUnit(DataInputUnit):
         return dataframe_list
 
     def __str__(self):
-        return self.input_path_list
+        return str(self.input_path_list)
 
 
 class DataInputMultiPathUnit(DataInputUnit):
@@ -106,7 +106,7 @@ class DataInputMultiPathUnit(DataInputUnit):
         return self.input_path_list
 
     def __str__(self):
-        return self.input_path_list
+        return str(self.input_path_list)
 
 
 class DataInputDBUnit(DataInputUnit):
