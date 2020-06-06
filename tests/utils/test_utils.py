@@ -77,6 +77,10 @@ class TestUtils(unittest.TestCase):
              tasks[9]],
             [tasks[10], tasks[6], tasks[7], tasks[0], tasks[1], tasks[2], tasks[4], tasks[3], tasks[5], tasks[8],
              tasks[9]],
+            [tasks[10], tasks[6], tasks[7], tasks[0], tasks[1], tasks[2], tasks[3], tasks[4], tasks[8], tasks[5],
+             tasks[9]],
+            [tasks[10], tasks[6], tasks[7], tasks[0], tasks[1], tasks[2], tasks[3], tasks[4], tasks[5], tasks[8],
+             tasks[9]],
         ]
 
         print(task_list)

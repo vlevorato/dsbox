@@ -1,5 +1,8 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 import types
+import numpy as np
+
+from sklearn.utils.validation import check_is_fitted
 
 __author__ = "Vincent Levorato, Eric Biernat"
 __credits__ = "https://github.com/octo-technology/bdacore"
@@ -167,11 +170,32 @@ class TagEncoder(BaseEstimator, TransformerMixin):
         -------
         y : array-like of shape [n_samples]
         """
+        check_is_fitted(self)
         x_transform = []
         for x in X:
             if x not in self.dict_tag2id:
                 x_transform.append(self.missing_value)
             else:
                 x_transform.append(self.dict_tag2id[x])
+
+        return x_transform
+
+    def inverse_transform(self, y):
+        """Transform labels back to original encoding.
+        Parameters
+        ----------
+        y : numpy array of shape [n_samples]
+            Target values.
+        Returns
+        -------
+        y : numpy array of shape [n_samples]
+        """
+        check_is_fitted(self)
+        x_transform = []
+        for x in y:
+            if x not in self.dict_id2tag:
+                x_transform.append(np.nan)
+            else:
+                x_transform.append(self.dict_id2tag[x])
 
         return x_transform
