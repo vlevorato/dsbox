@@ -4,6 +4,10 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from smart_open import open
 
+"""
+Some util functions used to navigate into Airflow DAGs.
+"""
+
 
 def breadth_first_search_task_list(task_root, task_list=[], mode='upstream'):
     sub_task_list = []
@@ -102,6 +106,11 @@ def plot_dag(dag):
     plt.show()
 
 
+"""
+Some utils function used to persist objects.
+"""
+
+
 def pickle_compress(obj):
     return gzip.zlib.compress(pickle.dumps(obj))
 
@@ -122,6 +131,11 @@ def load_object_file(file_path):
     obj_pz = file_obj.read()
     obj = decompress_unpickle(obj_pz)
     return obj
+
+
+"""
+Some misc utils.
+"""
 
 
 def pandas_downcast_numeric(df_to_downcast, float_type_to_downcast=("float64", "float32"),
