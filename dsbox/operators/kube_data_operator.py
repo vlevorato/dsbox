@@ -2,6 +2,19 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 
 
 class KubeDataOperator(KubernetesPodOperator):
+    """
+
+    Parameters
+    ----------
+    operation: str
+        operation name defined in the data catalog operations used in the project
+
+    kube_conf: dict, default=None
+        Kubernetes cluster configuration. Must contains at least 'arguments' and 'cmds' keys
+
+    kwargs: dict
+        Other Parameters passed to KubernetesPodOperator constructor
+    """
 
     ui_color = '#defdff'
 

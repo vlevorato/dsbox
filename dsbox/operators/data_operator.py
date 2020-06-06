@@ -3,6 +3,20 @@ from airflow.utils.decorators import apply_defaults
 
 
 class DataOperator(BaseOperator):
+    """
+
+    Data Operator is a custom operator which can handle input and/or output data.
+    The parameters of the operation function has to be passed as a dict named 'params', based on BaseOperator behavior.
+
+    Parameters
+    ----------
+    operation_function: function
+        function taking the output of the input_unit and returning its result to the input of the output_unit
+    input_unit: DataInputUnit, default=None
+        define input data reading
+    output_unit: DataOutputUnit, default=None
+        define output data writing
+    """
 
     ui_color = '#fff2e6'
 
