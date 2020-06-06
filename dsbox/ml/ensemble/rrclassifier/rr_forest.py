@@ -4,7 +4,7 @@ from sklearn.ensemble.forest import ForestClassifier
 from dsbox.ml.ensemble.rrclassifier.randomrotation import random_rotation_matrix
 
 from sklearn.ensemble.base import _partition_estimators
-from sklearn.externals.joblib import Parallel, delayed
+from joblib import Parallel, delayed
 from scipy.stats.mstats_basic import mquantiles
 
 __credits__ = "https://github.com/tmadl/sklearn-random-rotation-ensembles"
