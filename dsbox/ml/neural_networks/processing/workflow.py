@@ -118,25 +118,6 @@ class TextNeuralNetPipeline(BaseEstimator, ClassifierMixin):
         x = self.text2seq.transform(X)
         return self.model_.predict(x)
 
-    def predict_proba(self, X):
-        """
-        Predict a list of texts to belong to a known class.
-
-        Parameters
-        ----------
-        X : array-like, iterable
-            Collection of str or an iterable which yields str
-
-        Returns
-        -------
-        probability of belonging to each class id.
-        """
-
-        check_is_fitted(self, self.attr_to_check)
-
-        x = self.text2seq.transform(X)
-        return self.model_.predict_proba(x)
-
 
 class ImageNeuralNetPipeline(BaseEstimator, ClassifierMixin):
     """

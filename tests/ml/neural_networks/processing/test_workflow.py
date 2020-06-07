@@ -32,24 +32,6 @@ class TestPipeline(unittest.TestCase):
         # then
         self.assertIsNotNone(y_pred)
 
-    def test_fit_predict_proba_text_nn_pipeline_should_return_some_result(self):
-        # given
-        x_train = np.array(['this is really really awesome !',
-                            'it is so awesome !',
-                            'that sucks']
-                           )
-        y_train = np.array([1, 1, 0])
-
-        # when
-        model = TextNeuralNetPipeline(factory_class=LSTMFactory, num_labels=2)
-        model.fit(x_train, y_train, verbose=0)
-
-        x_test = np.array(['it is really awesome !'])
-        y_pred = model.predict_proba(x_test)[0]
-
-        # then
-        self.assertIsNotNone(y_pred)
-
     def test_fit_image_nn_workflow_should_set_params_automatically(self):
         # given
         workflow = ImageNeuralNetPipeline(weights="imagenet")

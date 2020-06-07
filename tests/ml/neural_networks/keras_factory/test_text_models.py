@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 
-from keras.wrappers.scikit_learn import KerasClassifier
+from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 from tensorflow.python.keras.utils.np_utils import to_categorical
 
 logging.getLogger("tensorflow").setLevel(logging.WARNING)

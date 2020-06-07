@@ -1,9 +1,9 @@
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble.forest import ForestClassifier
+from sklearn.ensemble._forest import ForestClassifier
 from dsbox.ml.ensemble.rrclassifier.randomrotation import random_rotation_matrix
 
-from sklearn.ensemble.base import _partition_estimators
+from sklearn.ensemble._base import _partition_estimators
 from joblib import Parallel, delayed
 from scipy.stats.mstats_basic import mquantiles
 
@@ -26,8 +26,7 @@ class RRTreeClassifier(DecisionTreeClassifier):
                  max_features=None,
                  random_state=None,
                  max_leaf_nodes=None,
-                 class_weight=None,
-                 presort=False):
+                 class_weight=None):
         super(RRTreeClassifier, self).__init__(
             criterion=criterion,
             splitter=splitter,
@@ -38,8 +37,7 @@ class RRTreeClassifier(DecisionTreeClassifier):
             max_features=max_features,
             max_leaf_nodes=max_leaf_nodes,
             class_weight=class_weight,
-            random_state=random_state,
-            presort=presort)
+            random_state=random_state)
 
     def rotate(self, X):
         if not hasattr(self, 'rotation_matrix'):

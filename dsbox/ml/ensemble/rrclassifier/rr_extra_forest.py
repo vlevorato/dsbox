@@ -1,9 +1,9 @@
 import numpy as np
-from sklearn.ensemble.forest import ForestClassifier
-from sklearn.tree.tree import ExtraTreeClassifier
+from sklearn.ensemble._forest import ForestClassifier
+from sklearn.tree import ExtraTreeClassifier
 from dsbox.ml.ensemble.rrclassifier.randomrotation import random_rotation_matrix
 
-from sklearn.ensemble.base import _partition_estimators
+from sklearn.ensemble._base import _partition_estimators
 from joblib import Parallel, delayed
 from scipy.stats.mstats_basic import mquantiles
 

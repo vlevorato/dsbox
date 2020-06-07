@@ -10,8 +10,8 @@ from sklearn.covariance import EmpiricalCovariance, MinCovDet
 from sklearn.exceptions import NotFittedError
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.mixture import BayesianGaussianMixture
-from sklearn.mixture.base import BaseMixture
-from sklearn.neighbors.kde import KernelDensity
+from sklearn.mixture._base import BaseMixture
+from sklearn.neighbors._kde import KernelDensity
 from sklearn.utils.validation import check_is_fitted, column_or_1d
 
 from scipy.stats import norm, median_absolute_deviation
@@ -241,7 +241,7 @@ class KMeansOneClusterOutliers(BaseEstimator, OutlierMixin):
     Parameters
     ----------
     
-    kmeans_estimator : KMeans, optional (default=KMeans(n_clusters=1, n_jobs=-1))
+    kmeans_estimator : KMeans, optional (default=KMeans(n_clusters=1))
     
     threshold : float (default=None)
         Used by predict method : if probability returned by predict_proba method is above this value, the element 
@@ -262,7 +262,7 @@ class KMeansOneClusterOutliers(BaseEstimator, OutlierMixin):
     
     """
 
-    def __init__(self, kmeans_estimator=KMeans(n_clusters=1, n_jobs=-1), threshold=None):
+    def __init__(self, kmeans_estimator=KMeans(n_clusters=1), threshold=None):
         if not isinstance(kmeans_estimator, KMeans) and not isinstance(kmeans_estimator, MiniBatchKMeans):
             raise TypeError("Estimator must be a sklearn.cluster.KMeans or MiniBatchKMeans class")
 
@@ -726,7 +726,7 @@ class MADOutliers(BaseEstimator, OutlierMixin):
         self.X_ = pd.DataFrame()
         for column in X.columns:
             self.X_['mad_{}'.format(column)] = X[column].rolling(self.window, min_periods=1).apply(
-                median_absolute_deviation)
+                median_absolute_deviation, raw=False)
             self.X_['median_{}'.format(column)] = X[column].rolling(self.window, min_periods=1).median()
             self.X_[column] = (np.abs(X[column] - self.X_['median_{}'.format(column)]) / self.X_[
                 'mad_{}'.format(column)]) > self.cutoff
