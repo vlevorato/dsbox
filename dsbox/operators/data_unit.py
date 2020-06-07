@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from importlib import import_module
 
 import pandas as pd
 from sqlalchemy import create_engine
@@ -34,6 +35,56 @@ class DataOutputUnit(ABC):
         return str(self.output_path)
 
 
+class DataGlobalInputUnit(DataInputUnit):
+    """
+    Data unit allowing to read data via any API using a dataframe structure (Pandas, Dask, Vaex).
+
+    Parameters
+    ----------
+    input_path: str
+        file path to read
+    api_module: str, default='pandas'
+        module name used apply read function set in read_function parameter
+    read_function_name: str, default='read_csv'
+        set the function name used by backend API to read data
+    kwargs: dict
+        used by backend API to pass others parameters
+    """
+
+    def __init__(self, input_path, api_module='pandas', read_function_name='read_csv', **kwargs):
+        self.input_path = input_path
+        self.read_function_name = read_function_name
+        self.api_module = import_module(api_module)
+        self.kwargs_read = kwargs
+
+    def read_data(self):
+        dataframe = getattr(self.api_module, self.read_function_name)(self.input_path, **self.kwargs_read)
+        return dataframe
+
+
+class DataGlobalOutputFileUnit(DataOutputUnit):
+    """
+    Data unit allowing to write data via dataframe API.
+
+    Parameters
+    ----------
+    output_path: str
+        file path to write
+    write_function_name: str, default='to_csv'
+        set the function name used by backend API to write data
+    kwargs: dict
+        used by backend API to pass others parameters
+    """
+
+    def __init__(self, output_path, write_function_name='to_csv', **kwargs):
+        self.output_path = output_path
+        self.write_function_name = write_function_name
+        self.kwargs_write = kwargs
+
+    def write_data(self, dataframe):
+        getattr(dataframe, self.write_function_name)(self.output_path, **self.kwargs_write)
+
+
 class DataInputFileUnit(DataInputUnit):
     """
     Data unit allowing to read data via Pandas API.
@@ -47,8 +98,8 @@ class DataInputFileUnit(DataInputUnit):
     kwargs: dict
         used by Pandas API to pass others parameters
     """
-    def __init__(self, input_path, pandas_read_function_name='read_csv', **kwargs):
 
+    def __init__(self, input_path, pandas_read_function_name='read_csv', **kwargs):
         self.input_path = input_path
         self.pandas_read_function_name = pandas_read_function_name
         self.pandas_kwargs_read = kwargs
@@ -68,6 +119,7 @@ class DataInputPathUnit(DataInputUnit):
     input_path: str
         file path to read
     """
+
     def __init__(self, input_path):
         self.input_path = input_path
 
@@ -75,9 +127,9 @@ class DataInputPathUnit(DataInputUnit):
         return self.input_path
 
 
-class DataOutputFileUnit(DataOutputUnit):
+class DataOutputFileUnit(DataGlobalOutputFileUnit):
     """
-    Data unit allowing to write data via Pandas API.
+    Data unit allowing to write data via Pandas API. (kept for backwards compatibility)
 
     Parameters
     ----------
@@ -88,13 +140,12 @@ class DataOutputFileUnit(DataOutputUnit):
     kwargs: dict
         used by Pandas API to pass others parameters
     """
+
     def __init__(self, output_path, pandas_write_function_name='to_csv', **kwargs):
-        self.output_path = output_path
-        self.pandas_write_function_name = pandas_write_function_name
-        self.pandas_kwargs_write = kwargs
+        super(DataOutputFileUnit, self).__init__(output_path, pandas_write_function_name, **kwargs)
 
     def write_data(self, dataframe):
-        getattr(dataframe, self.pandas_write_function_name)(self.output_path, **self.pandas_kwargs_write)
+        getattr(dataframe, self.write_function_name)(self.output_path, **self.kwargs_write)
 
 
 class DataInputPlasmaUnit(DataInputUnit):
@@ -133,6 +184,7 @@ class DataOutputPlasmaUnit(DataOutputUnit):
     overwrite: bool, default=True
         if True, don't verify if object id is still present, and overwrite data, else, an exception is raised
     """
+
     def __init__(self, plasma_store, object_id, overwrite=True):
         self.plasma_store = plasma_store
         self.object_id = object_id
@@ -160,6 +212,7 @@ class DataInputMultiFileUnit(DataInputUnit):
     kwargs: dict
         used by Pandas API to pass others parameters
     """
+
     def __init__(self, input_path_list, pandas_read_function_name='read_csv', **kwargs):
         self.input_path_list = input_path_list
         self.pandas_read_function_name = pandas_read_function_name
@@ -185,6 +238,7 @@ class DataInputMultiPathUnit(DataInputUnit):
     input_path_list: list
         list of paths data to read
     """
+
     def __init__(self, input_path_list):
         self.input_path_list = input_path_list
 
@@ -209,6 +263,7 @@ class DataInputDBUnit(DataInputUnit):
     kwargs: dict
         used by Pandas API to pass others parameters
     """
+
     def __init__(self, sql_query, db_url, **kwargs):
         self.sql_query = sql_query
         self.db_url = db_url
@@ -236,6 +291,7 @@ class DataOutputDBUnit(DataOutputUnit):
     kwargs: dict
         used by Pandas API to pass others parameters
     """
+
     def __init__(self, output_name, db_url, **kwargs):
         self.output_name = output_name
         self.db_url = db_url
@@ -257,6 +313,7 @@ class DataPGUnit:
         dict containing all connection information: username, password, hostname, port, dbname
 
     """
+
     def __init__(self, connection_infos_dict):
         self.username = connection_infos_dict['username']
         self.password = connection_infos_dict['password']
@@ -272,6 +329,7 @@ class DataInputPGUnit(DataPGUnit, DataInputUnit):
     connection_infos_dict: dict
         dict containing all connection information: username, password, hostname, port, dbname
     """
+
     def __init__(self, connection_infos_dict, **kwargs):
         super(DataInputPGUnit, self).__init__(connection_infos_dict)
         self.dbconnector_kwargs = kwargs
@@ -291,6 +349,7 @@ class DataOutputPGUnit(DataPGUnit, DataOutputUnit):
     connection_infos_dict: dict
         dict containing all connection information: username, password, hostname, port, dbname
     """
+
     def __init__(self, connection_infos_dict, **kwargs):
         super(DataOutputPGUnit, self).__init__(connection_infos_dict)
         self.dbconnector_kwargs = kwargs
