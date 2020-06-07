@@ -68,11 +68,11 @@ class GaussianProcessOutliersTest(unittest.TestCase):
         gp_outliers = GaussianProcessOutliers(GaussianProcessRegressor(alpha=0.9, normalize_y=True), n_samples=100)
         gp_outliers.fit(df)
         outliers = gp_outliers.predict(df, confidence=0.999)
-        outlier_positions = np.argwhere(outliers == np.amax(outliers)).flatten().tolist()
 
         # then
         outlier_positions_true = [300, 700]
-        self.assertListEqual(outlier_positions_true, outlier_positions)
+        self.assertTrue(outliers[outlier_positions_true[0]])
+        self.assertTrue(outliers[outlier_positions_true[1]])
 
 
 class KMeansOneClusterOutliersTest(unittest.TestCase):

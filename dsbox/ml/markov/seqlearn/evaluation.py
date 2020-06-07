@@ -2,11 +2,11 @@ from functools import partial
 from warnings import warn
 
 import numpy as np
-from sklearn.externals import six
 
 from ._utils import check_random_state
 
 __credits__ = "Lars Buitinck"
+
 
 def bio_f_score(y_true, y_pred):
     """F-score for BIO-tagging scheme, as used by CoNLL.
@@ -146,7 +146,7 @@ class SequenceKFold(object):
 
         seq_ind = np.arange(len(lengths))
 
-        for _ in six.moves.xrange(self.n_iter):
+        for _ in range(self.n_iter):
             if self.shuffle:
                 rng.shuffle(seq_ind)
 
