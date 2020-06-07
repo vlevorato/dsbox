@@ -52,6 +52,7 @@ writing_some_parquet_unit = DataOutputFileUnit('path/to/index_sorted_dataset.par
 ```
 
 Several pre-built ```DataUnit``` are avalaible and you can easily build yours. Some examples gives you a preview of complete dags workflow for data science.
+`DataGlobalInputUnit` and `DataGlobalOutputUnit` can now be used with **any dataframe backend API (Pandas, Dask, Vaex, ...)** as you define explicitly which function you are using. 
 
 
 ### Airflow KubeDataOperator (KDO)
