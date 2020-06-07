@@ -122,18 +122,3 @@ class TestMultinomailHMM(unittest.TestCase):
         h._init(X, lengths=lengths)
 
         self.assertTrue(log_likelihood_increasing(h, X, lengths, n_iter))
-
-    def test__check_input_symbols(self):
-        self.setup_method()
-        self.assertTrue(self.h._check_input_symbols([[0, 0, 2, 1, 3, 1, 1]]))
-        self.assertTrue(self.h._check_input_symbols(
-            np.array([[0, 0, 2, 1, 3, 1, 1]], np.uint8)))
-
-        # a) non-contigous
-        self.assertFalse(self.h._check_input_symbols([[0, 0, 3, 5, 10]]))
-        # b) not enough data
-        self.assertFalse(self.h._check_input_symbols([[0]]))
-        # c) non-integral
-        self.assertFalse(self.h._check_input_symbols([[0., 2., 1., 3.]]))
-        # d) negative integers
-        self.assertFalse(self.h._check_input_symbols([[0, 0, -2, 1, 3, 1, 1]]))

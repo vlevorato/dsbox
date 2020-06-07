@@ -52,6 +52,7 @@ writing_some_parquet_unit = DataOutputFileUnit('path/to/index_sorted_dataset.par
 ```
 
 Several pre-built ```DataUnit``` are avalaible and you can easily build yours. Some examples gives you a preview of complete dags workflow for data science.
+`DataGlobalInputUnit` and `DataGlobalOutputUnit` can now be used with **any dataframe backend API (Pandas, Dask, Vaex, ...)** as you define explicitly which function you are using. 
 
 
 ### Airflow KubeDataOperator (KDO)
@@ -88,7 +89,7 @@ and an example of the YAML data operations file that should be passed as ```data
 ```yaml
 My_process:
   operation_function:
-    module: myprojectmoduel.process
+    module: myprojectmodule.process
     name: my_function
   input_unit:
     type: DataInputFileUnit
@@ -104,6 +105,17 @@ My_process:
 ## Machine Learning part
  
 This part is a humble contribution to accelerate Data Scientists recurrent operations, like for instance building lagged features for times series or exporting model features contribution. All the code produced here is Pandas and Scikit-learn friendly, as nearly everything is defined as a sklearn estimator.
+
+### Tutorials 🎓
+#### Neural Networks 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vlevorato/dsbox/blob/develop/notebooks/NeuralNets-AutoEncoder.ipynb) <a href="https://github.com/vlevorato/dsbox/blob/develop/notebooks/NeuralNets-AutoEncoder.ipynb">Classic Auto-encoders architectures</a>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vlevorato/dsbox/blob/develop/notebooks/NeuralNets-TextClassification.ipynb) <a href="https://github.com/vlevorato/dsbox/blob/develop/notebooks/NeuralNets-TextClassification.ipynb">
+LSTM and CNN for text classification - Sentiment analysis applied to tweets in French</a>
+
+
+
+### Subpackages list
  
  Subpackage | Description
 ------------ | -------------

@@ -43,7 +43,7 @@ class LSH(BaseEstimator):
             n_bands: int, optional, default 50
                 amount of bands to use for merging hash codes. Must be a multiple of the amount of hash functions
 
-            compare_function: callable, optional, default bdacore.metrics.generalized_jaccard_similarity_score
+            compare_function: callable, optional, default dsbox.ml.metrics.generalized_jaccard_similarity_score
                 metric used to sort found candidates
 
             Attributes

@@ -77,6 +77,20 @@ class TestCategorical(unittest.TestCase):
 
         self.assertListEqual(column_expected, column_encoded)
 
+    def test_tagencoder_return_decoded_labels(self):
+        # given
+        df = pd.DataFrame({'item': ['A', 'A', 'B', 'B', 'B']})
+
+        # when
+        tagencoder = TagEncoder()
+        column_encoded = tagencoder.fit_transform(df['item'])
+        column_decoded = tagencoder.inverse_transform(column_encoded)
+
+        # then
+        column_expected = ['A', 'A', 'B', 'B', 'B']
+
+        self.assertListEqual(column_expected, column_decoded)
+
 
 if __name__ == '__main__':
     unittest.main()

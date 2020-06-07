@@ -7,7 +7,7 @@ from dsbox.utils import format_dict_path_items
 
 class Dataoperations():
     """
-    Load data operations meta-data.
+    Load data operations meta-data (YAML format).
 
     Ex:
 
@@ -36,10 +36,32 @@ class Dataoperations():
         self.data_unit_module = data_unit_module
 
     def load_datasets(self, datasets_file_path):
+        """
+        Add a datasets operations catalog.
+
+        Parameters
+        ----------
+        datasets_file_path: str
+            datasets catalog operations path
+
+        """
         datasets_file = open(datasets_file_path)
         self.parsed_datasets_file = yaml.load(datasets_file, Loader=yaml.FullLoader)
 
     def run(self, operation_name):
+        """
+        Run operation defined in data catalog operation.
+
+        Parameters
+        ----------
+        operation_name: str
+            operation name to run
+
+        """
+        if self.parsed_datasets_file is None:
+            raise AttributeError('Call load_datasets method before running operation. '
+                                 'Datasets catalog operations is not set.')
+
         operation_structure = self.parsed_datasets_file[operation_name]
         operation_structure = format_dict_path_items(operation_structure, self.path)
 

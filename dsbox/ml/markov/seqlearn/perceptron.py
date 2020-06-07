@@ -4,7 +4,6 @@ import sys
 
 import numpy as np
 from scipy.sparse import csc_matrix
-from sklearn.externals import six
 
 from dsbox.ml.markov.seqlearn.base import BaseSequenceClassifier
 from dsbox.ml.markov.seqlearn._utils import (atleast2d_or_csr, check_random_state, count_trans,
@@ -136,7 +135,7 @@ class StructuredPerceptron(BaseSequenceClassifier):
         avg_count = 1.
         lr_exponent = self.lr_exponent
 
-        for it in six.moves.xrange(1, self.max_iter + 1):
+        for it in range(1, self.max_iter + 1):
             lr = 1. / (it ** lr_exponent)
 
             if self.verbose:

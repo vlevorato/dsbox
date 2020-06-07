@@ -1,3 +1,4 @@
+import logging
 import string
 import sys
 from collections import deque
@@ -6,19 +7,22 @@ import numpy as np
 from scipy.special import logsumexp
 from sklearn.base import BaseEstimator
 from sklearn.utils import check_array, check_random_state
-from sklearn.utils.validation import check_is_fitted
 
 import pyximport
+from sklearn.utils.validation import check_is_fitted
 
 pyximport.install(setup_args={'include_dirs': np.get_include()})
+
 from . import _hmmc
 from .utils import normalize, log_normalize, iter_from_X_lengths, log_mask_zero
 
+
+_log = logging.getLogger(__name__)
 #: Supported decoder algorithms.
 DECODER_ALGORITHMS = frozenset(("viterbi", "map"))
 
 
-class ConvergenceMonitor(object):
+class ConvergenceMonitor:
     """Monitors and reports convergence to :data:`sys.stderr`.
 
     Parameters
@@ -185,7 +189,6 @@ class _BaseHMM(BaseEstimator):
     transmat\_ : array, shape (n_components, n_components)
         Matrix of transition probabilities between states.
     """
-
     def __init__(self, n_components=1,
                  startprob_prior=1.0, transmat_prior=1.0,
                  algorithm="viterbi", random_state=None,
@@ -486,6 +489,10 @@ class _BaseHMM(BaseEstimator):
             if self.monitor_.converged:
                 break
 
+        if (self.transmat_.sum(axis=1) == 0).any():
+            _log.warning("Some rows of transmat_ have zero sum because no "
+                         "transition from the state was ever observed.")
+
         return self
 
     def _do_viterbi_pass(self, framelogprob):
@@ -524,6 +531,27 @@ class _BaseHMM(BaseEstimator):
         with np.errstate(under="ignore"):
             return np.exp(log_gamma)
 
+    def _needs_init(self, code, name):
+        if code in self.init_params:
+            if hasattr(self, name):
+                _log.warning(
+                    "Even though the %r attribute is set, it will be "
+                    "overwritten during initialization because 'init_params' "
+                    "contains %r", name, code)
+            return True
+        if not hasattr(self, name):
+            return True
+        return False
+
+    def _get_n_fit_scalars_per_param(self):
+        """Return a mapping of fittable parameter name (as in ``self.params``)
+        to the number of corresponding scalar parameters that will actually be
+        fitted.
+
+        This is used to detect whether the user did not pass enough data points
+        for a non-degenerate fit.
+        """
+
     def _init(self, X, lengths):
         """Initializes model parameters prior to fitting.
 
@@ -537,11 +565,20 @@ class _BaseHMM(BaseEstimator):
             these should be ``n_samples``.
         """
         init = 1. / self.n_components
-        if 's' in self.init_params or not hasattr(self, "startprob_"):
+        if self._needs_init("s", "startprob_"):
             self.startprob_ = np.full(self.n_components, init)
-        if 't' in self.init_params or not hasattr(self, "transmat_"):
+        if self._needs_init("t", "transmat_"):
             self.transmat_ = np.full((self.n_components, self.n_components),
                                      init)
+        n_fit_scalars_per_param = self._get_n_fit_scalars_per_param()
+        if n_fit_scalars_per_param is not None:
+            n_fit_scalars = sum(
+                n_fit_scalars_per_param[p] for p in self.params)
+            if X.size < n_fit_scalars:
+                _log.warning(
+                    "Fitting a model with %d free scalar parameters with only "
+                    "%d data points will result in a degenerate solution.",
+                    n_fit_scalars, X.size)
 
     def _check(self):
         """Validates model parameters prior to fitting.
@@ -680,15 +717,18 @@ class _BaseHMM(BaseEstimator):
         stats : dict
             Sufficient statistics updated from all available samples.
         """
+        # If a prior is < 1, `prior - 1 + starts['start']` can be negative.  In
+        # that case maximization of (n1+e1) log p1 + ... + (ns+es) log ps under
+        # the conditions sum(p) = 1 and all(p >= 0) show that the negative
+        # terms can just be set to zero.
         # The ``np.where`` calls guard against updating forbidden states
         # or transitions in e.g. a left-right HMM.
         if 's' in self.params:
-            startprob_ = self.startprob_prior - 1.0 + stats['start']
-            self.startprob_ = np.where(self.startprob_ == 0.0,
-                                       self.startprob_, startprob_)
+            startprob_ = np.maximum(self.startprob_prior - 1 + stats['start'],
+                                    0)
+            self.startprob_ = np.where(self.startprob_ == 0, 0, startprob_)
             normalize(self.startprob_)
         if 't' in self.params:
-            transmat_ = self.transmat_prior - 1.0 + stats['trans']
-            self.transmat_ = np.where(self.transmat_ == 0.0,
-                                      self.transmat_, transmat_)
+            transmat_ = np.maximum(self.transmat_prior - 1 + stats['trans'], 0)
+            self.transmat_ = np.where(self.transmat_ == 0, 0, transmat_)
             normalize(self.transmat_, axis=1)

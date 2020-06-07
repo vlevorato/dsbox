@@ -1,6 +1,7 @@
 """Private utilities."""
 
 import numpy as np
+from sklearn.utils.validation import NotFittedError
 
 
 # Copied from scikit-learn 0.19.
@@ -11,7 +12,7 @@ def _validate_covars(covars, covariance_type, n_components):
         if len(covars) != n_components:
             raise ValueError("'spherical' covars have length n_components")
         elif np.any(covars <= 0):
-            raise ValueError("'spherical' covars must be non-negative")
+            raise ValueError("'spherical' covars must be positive")
     elif covariance_type == 'tied':
         if covars.shape[0] != covars.shape[1]:
             raise ValueError("'tied' covars must have shape (n_dim, n_dim)")
@@ -24,7 +25,7 @@ def _validate_covars(covars, covariance_type, n_components):
             raise ValueError("'diag' covars must have shape "
                              "(n_components, n_dim)")
         elif np.any(covars <= 0):
-            raise ValueError("'diag' covars must be non-negative")
+            raise ValueError("'diag' covars must be positive")
     elif covariance_type == 'full':
         if len(covars.shape) != 3:
             raise ValueError("'full' covars must have shape "
@@ -59,3 +60,12 @@ def distribute_covar_matrix_to_match_covariance_type(
         raise ValueError("covariance_type must be one of " +
                          "'spherical', 'tied', 'diag', 'full'")
     return cv
+
+
+# Adapted from scikit-learn 0.21.
+def check_is_fitted(estimator, attribute):
+    if not hasattr(estimator, attribute):
+        raise NotFittedError(
+            "This %s instance is not fitted yet. Call 'fit' with "
+            "appropriate arguments before using this method."
+            % type(estimator).__name__)
