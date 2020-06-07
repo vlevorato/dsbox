@@ -1,4 +1,4 @@
-[![PyPI version](https://badge.fury.io/py/ds-box.svg)](https://badge.fury.io/py/ds-box)
+[![PyPI version](https://badge.fury.io/py/ds-box.svg?branch=master&kill_cache=1)](https://badge.fury.io/py/ds-box?branch=master&kill_cache=1)
 
 # DS Box
 <p align="center">
