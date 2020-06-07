@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4] - 2020-06-07
+
+### Added
+
+- KerasApplicationFactory generating known NN architectures for image labelling (for instance Xception)
+- Add inverse_transform method for TagEncoder 
+- Documentation for OPS part (Operators, Data Units)
+- DataGlobalInputUnit and DataGlobalOutputUnit able to handle all dataframes APIs (Pandas, Vaex, Dask and co.)
+- Tutorial notebook "Classic Auto-encoders architectures"
+- Tutorial notebook "LSTM and CNN for text classification - Sentiment analysis applied to tweets in French"
+
+### Changed
+
+- Update keras imports to tensorflow.keras
+- Add OutlierMixin inheritance to outliers class
+- Add a window parameter to MADOutliers estimator
+
+### Fixed
+
+- Add __str__ method to multiple data units (cause crash in Apache Airflow if consulting task instance details)
+- Update joblib import from sklearn.externals.joblib to joblib
+- Re-aligned some pacakges importation to avoid future deprecation
+
 ## [1.3.1] - 2020-05-10
 
 ### Added
