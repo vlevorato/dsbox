@@ -105,6 +105,17 @@ My_process:
 ## Machine Learning part
  
 This part is a humble contribution to accelerate Data Scientists recurrent operations, like for instance building lagged features for times series or exporting model features contribution. All the code produced here is Pandas and Scikit-learn friendly, as nearly everything is defined as a sklearn estimator.
+
+### Tutorials 🎓
+#### Neural Networks 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vlevorato/dsbox/blob/develop/notebooks/NeuralNets-AutoEncoder.ipynb) <a href="https://github.com/vlevorato/dsbox/blob/develop/notebooks/NeuralNets-AutoEncoder.ipynb">Classic Auto-encoders architectures</a>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vlevorato/dsbox/blob/develop/notebooks/NeuralNets-TextClassification.ipynb) <a href="https://github.com/vlevorato/dsbox/blob/develop/notebooks/NeuralNets-TextClassification.ipynb">
+LSTM and CNN for text classification - Sentiment analysis applied to tweets in French</a>
+
+
+
+### Subpackages list
  
  Subpackage | Description
 ------------ | -------------
