@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from numpy.lib.stride_tricks import as_strided
 from sklearn.base import BaseEstimator, TransformerMixin
 import types
 
@@ -34,21 +35,16 @@ class Shifter(BaseEstimator, TransformerMixin):
         --------
 
         >>> from dsbox.ml.feature_engineering.timeseries import Shifter
-        >>> df_ts = pd.DataFrame({'data': [0.0, 1.0, 2.0, 3.0, 4.0]}, \
-                             index=[pd.Timestamp('20130101 09:00:00'), \
-                                    pd.Timestamp('20130101 09:00:02'), \
-                                    pd.Timestamp('20130101 09:00:03'), \
-                                    pd.Timestamp('20130101 09:00:05'), \
-                                    pd.Timestamp('20130101 09:00:06')])
+        >>> df_ts = pd.DataFrame({'data': [0.0, 1.0, 2.0, 3.0, 4.0]})
         >>> shifter = Shifter(shifts=[1],prefix='t-')
         >>> df_shift_ts = shifter.transform(df_ts)
         >>> df_shift_ts    
-                             t-1_data
-        2013-01-01 09:00:00       NaN
-        2013-01-01 09:00:02       0.0
-        2013-01-01 09:00:03       1.0
-        2013-01-01 09:00:05       2.0
-        2013-01-01 09:00:06       3.0
+           t-1_data
+        0       NaN
+        1       0.0
+        2       1.0
+        3       2.0
+        4       3.0
 
 
     """
@@ -397,3 +393,75 @@ def create_diff_shift_features(df_shift, cols=[], prefix='diff_'):
     """
     for i in range(0, len(cols) - 1):
         df_shift[prefix + cols[i + 1] + '_' + cols[i]] = df_shift[cols[i + 1]] - df_shift[cols[i]]
+
+
+def _get_numpy_array_strides(array, window):
+    shape = array.shape[:-1] + (array.shape[-1], window)
+    strides = array.strides + (array.strides[-1],)
+    sequence_strides = as_strided(array, shape=shape, strides=strides)
+    return sequence_strides
+
+
+def np_rolling_agg_window(array, window=3, agg_func=np.nanmean):
+    """
+    Calculating rolling aggregation using function, based on zero memory copying with numpy.
+    By default, the aggregation function is mean, so it returns rolling mean.
+    Efficient version of Pandas rolling function (with less parameters).
+
+    Parameters
+    ----------
+    array: numpy.array or pandas.Series
+        array values
+    window: int, default=3
+        window size for the aggregate function rolling calculation
+    agg_func: Callable, default=numpy.nanmean
+        function used for aggregation
+
+    Returns
+    -------
+    agg: numpy.array
+        Rolling result.
+
+
+    """
+    if type(array) == pd.Series:
+        array = array.values
+
+    sequence_strides = _get_numpy_array_strides(array, window)
+
+    agg = np.roll(agg_func(sequence_strides, axis=1), window - 1)
+    agg[0:window - 1] = np.nan
+    return agg
+
+
+def np_rolling_agg_abs_deviation_window(array, window=3, agg_func=np.nanmean):
+    """
+    Calculating rolling absolute deviation related to an aggregation function, using zero memory copying based on numpy.
+    By default, the aggregation function is mean, so it returns rollling Mean Absolute Deviation. Other calculation can be done
+    like the rolling Median Absolute Deviation.
+
+    Parameters
+    ----------
+    array: numpy.array or pandas.Series
+        array values
+    window: int, default=3
+        window size for the aggregate function rolling calculation
+    agg_func: Callable, default=numpy.nanmean
+        function used for aggregation
+
+    Returns
+    -------
+    agg_abs_deviation: numpy.array
+        Rolling "Agg" Absolute Deviation result.
+
+
+    """
+    if type(array) == pd.Series:
+        array = array.values
+
+    sequence_strides = _get_numpy_array_strides(array, window)
+
+    m = agg_func(sequence_strides, axis=1).reshape(-1, 1)
+    agg_abs_deviation = np.roll(agg_func(np.abs(sequence_strides - m), axis=1), window - 1)
+    agg_abs_deviation[0:window - 1] = np.nan
+    return agg_abs_deviation

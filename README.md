@@ -113,6 +113,9 @@ This part is a humble contribution to accelerate Data Scientists recurrent opera
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vlevorato/dsbox/blob/develop/notebooks/NeuralNets-TextClassification.ipynb) <a href="https://github.com/vlevorato/dsbox/blob/develop/notebooks/NeuralNets-TextClassification.ipynb">
 LSTM and CNN for text classification - Sentiment analysis applied to tweets in French</a>
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/vlevorato/dsbox/blob/develop/notebooks/OutliersDetection.ipynb) <a href="https://github.com/vlevorato/dsbox/blob/develop/notebooks/OutliersDetection.ipynb">
+Outliers detection - Univariate time series and multivariate application</a>
+
 
 
 ### Subpackages list

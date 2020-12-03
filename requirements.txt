@@ -1,4 +1,4 @@
-apache-airflow==1.10.9
+apache-airflow>=1.10.11
 boto3>=1.9.195
 cython>=0.29.12
 gcsfs>=0.6.2

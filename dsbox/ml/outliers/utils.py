@@ -9,14 +9,14 @@ def mean_absolute_deviation(x):
     """
     Mean Absolute Deviation
     """
-    return np.mean(np.abs(x - np.mean(x)))
+    return np.nanmean(np.abs(x - np.nanmean(x)))
 
 
 def median_absolute_deviation(x):
     """
     Median Absolute Deviation
     """
-    return np.median(np.abs(x - np.median(x)))
+    return np.nanmedian(np.abs(x - np.nanmedian(x)))
 
 
 def double_median_absolute_deviation(x):
@@ -33,11 +33,11 @@ def double_median_absolute_deviation(x):
     Couple of values: left mad, right mad
 
     """
-    median = np.median(x)
+    median = np.nanmedian(x)
     absolute_deviation = np.abs(x - median)
 
-    left_mad = np.median(absolute_deviation[absolute_deviation <= median])
-    right_mad = np.median(absolute_deviation[absolute_deviation >= median])
+    left_mad = np.nanmedian(absolute_deviation[absolute_deviation <= median])
+    right_mad = np.nanmedian(absolute_deviation[absolute_deviation >= median])
 
     return left_mad, right_mad
 
@@ -71,7 +71,7 @@ def mad_outliers(x, cutoff=2, z_score_coeff=0.6745):
     if mad_value == 0:
         return x * np.nan
 
-    x_mad = (z_score_coeff * np.abs(x - np.median(x))) / mad_value
+    x_mad = (z_score_coeff * np.abs(x - np.nanmedian(x))) / mad_value
     return x_mad > cutoff
 
 

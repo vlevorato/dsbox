@@ -3,9 +3,10 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from dsbox.ml.feature_engineering.timeseries import Shifter, RollingWindower, DistributionTransformer
+from dsbox.ml.feature_engineering.timeseries import Shifter, RollingWindower, DistributionTransformer, \
+    np_rolling_agg_window, np_rolling_agg_abs_deviation_window
 from dsbox.ml.outliers import median_absolute_deviation
-from pandas.util.testing import assert_frame_equal
+from pandas.util.testing import assert_frame_equal, assert_numpy_array_equal, assert_series_equal
 
 
 class TestComputeShift(unittest.TestCase):
@@ -167,3 +168,81 @@ class TestDistribution(unittest.TestCase):
                                     })
 
         assert_frame_equal(df_expected, df_distrib)
+
+
+class TestNumpyRolling(unittest.TestCase):
+    def test_np_rolling_mean_window_on_np_array(self):
+        # given
+        array = np.array([0, 1, 2, 3, 4])
+
+        # when
+        array_rol_mean = np_rolling_agg_window(array)
+
+        # then
+        array_expected = np.array([np.nan, np.nan, 1, 2, 3])
+
+        assert_numpy_array_equal(array_expected, array_rol_mean)
+
+    def test_np_rolling_median_window_on_np_array(self):
+        # given
+        array = np.array([0, 1, 2, 3, 0])
+
+        # when
+        array_rol_median = np_rolling_agg_window(array, agg_func=np.nanmedian)
+
+        # then
+        array_expected = np.array([np.nan, np.nan, 1, 2, 2])
+
+        assert_numpy_array_equal(array_expected, array_rol_median)
+
+    def test_np_rolling_mean_window_on_pd_dataframe(self):
+        # given
+        df = pd.DataFrame({'values': [0, 1, 2, 3, 4]})
+
+        # when
+        df_rol_mean = df.apply(np_rolling_agg_window)
+
+        # then
+        df_expected = pd.DataFrame({'values': [np.nan, np.nan, 1, 2, 3]})
+
+        assert_frame_equal(df_expected, df_rol_mean)
+
+    def test_np_rolling_mad_window_on_np_array(self):
+        # given
+        array = np.array([0, 1, 2, 3, 0])
+
+        # when
+        array_rol_mad = np.round(np_rolling_agg_abs_deviation_window(array), 2)
+
+        # then
+        array_expected = np.array([np.nan, np.nan, 0.67, 0.67, 1.11])
+
+        assert_numpy_array_equal(array_expected, array_rol_mad)
+
+    def test_np_rolling_mad_window_on_pd_dataframe(self):
+        # given
+        df = pd.DataFrame({'values': [0, 1, 2, 3, 0]})
+
+        # when
+        df_rol_mad = df.apply(np_rolling_agg_abs_deviation_window).round(2)
+
+        # then
+        df_expected = pd.DataFrame({'values': [np.nan, np.nan, 0.67, 0.67, 1.11]})
+
+        assert_frame_equal(df_expected, df_rol_mad)
+
+    def test_np_rolling_mad_window_on_pd_dataframe_using_groupby(self):
+        # given
+        df = pd.DataFrame({
+            'group': ['A'] * 5 + ['B'] * 5,
+            'values': [0, 1, 2, 3, 4, 0, 1, 2, 3, 0]})
+
+        # when
+        serie_rol_group_mad = df.groupby('group')['values'].apply(
+            np_rolling_agg_abs_deviation_window).explode().reset_index(drop=True).apply(np.round, decimals=2)
+
+        # then
+        serie_expected = pd.Series(name='values',
+                                   data=[np.nan, np.nan, 0.67, 0.67, 0.67, np.nan, np.nan, 0.67, 0.67, 1.11])
+
+        assert_series_equal(serie_expected, serie_rol_group_mad)
