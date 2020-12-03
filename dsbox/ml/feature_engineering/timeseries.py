@@ -35,21 +35,16 @@ class Shifter(BaseEstimator, TransformerMixin):
         --------
 
         >>> from dsbox.ml.feature_engineering.timeseries import Shifter
-        >>> df_ts = pd.DataFrame({'data': [0.0, 1.0, 2.0, 3.0, 4.0]}, \
-                             index=[pd.Timestamp('20130101 09:00:00'), \
-                                    pd.Timestamp('20130101 09:00:02'), \
-                                    pd.Timestamp('20130101 09:00:03'), \
-                                    pd.Timestamp('20130101 09:00:05'), \
-                                    pd.Timestamp('20130101 09:00:06')])
+        >>> df_ts = pd.DataFrame({'data': [0.0, 1.0, 2.0, 3.0, 4.0]})
         >>> shifter = Shifter(shifts=[1],prefix='t-')
         >>> df_shift_ts = shifter.transform(df_ts)
         >>> df_shift_ts    
-                             t-1_data
-        2013-01-01 09:00:00       NaN
-        2013-01-01 09:00:02       0.0
-        2013-01-01 09:00:03       1.0
-        2013-01-01 09:00:05       2.0
-        2013-01-01 09:00:06       3.0
+           t-1_data
+        0       NaN
+        1       0.0
+        2       1.0
+        3       2.0
+        4       3.0
 
 
     """
