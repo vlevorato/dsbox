@@ -24,7 +24,7 @@ class KubeDataOperator(KubernetesPodOperator):
         kube_conf['task_id'] = operation
         kube_conf.update(kwargs)
 
-        kube_conf['name'] = '{}-{}-pod'.format(kube_conf['dag'].dag_id, operation)
-        kube_conf['name'] = kube_conf['name'].replace('_', '-').lower()
+        name = '{}-{}-pod'.format(kube_conf['dag'].dag_id, operation).replace('_', '-').lower()[0:63]
+        kube_conf['name'] = name
 
         super().__init__(**kube_conf)
