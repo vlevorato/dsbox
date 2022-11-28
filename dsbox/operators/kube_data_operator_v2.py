@@ -1,4 +1,4 @@
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from airflow.providers.google.cloud.operators.kubernetes_engine import GKEStartPodOperator
 
 
