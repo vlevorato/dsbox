@@ -5,7 +5,7 @@ from dsbox.operators.data_executor import DataExecutor
 from dsbox.utils import format_dict_path_items
 
 
-class Dataoperations():
+class Dataoperations:
     """
     Load data operations meta-data (YAML format).
 
@@ -30,10 +30,18 @@ class Dataoperations():
 
     """
 
-    def __init__(self, path=None, data_unit_module='dsbox.operators.data_unit'):
+    def __init__(self, path=None, data_unit_module='dsbox.operators.data_unit',
+                 data_input_unit_module=None,
+                 data_output_unit_module=None):
         self.path = path
         self.parsed_datasets_file = None
         self.data_unit_module = data_unit_module
+        self.data_input_unit_module = data_input_unit_module
+        self.data_output_unit_module = data_output_unit_module
+        if self.data_input_unit_module is None:
+            self.data_input_unit_module = self.data_unit_module
+        if self.data_output_unit_module is None:
+            self.data_output_unit_module = self.data_unit_module
 
     def load_datasets(self, datasets_file_path):
         """
@@ -76,17 +84,19 @@ class Dataoperations():
 
         if 'input_unit' in operation_structure:
             input_unit_structure = operation_structure['input_unit']
-            DataInputUnitClass = getattr(import_module(self.data_unit_module), input_unit_structure['type'])
+            DataInputUnitClass = getattr(import_module(self.data_input_unit_module), input_unit_structure['type'])
             parameters = input_unit_structure.copy()
             parameters.pop('type')
             input_unit = DataInputUnitClass(**parameters)
+            print('Input unit: {}'.format(input_unit))
 
         if 'output_unit' in operation_structure:
             output_unit_structure = operation_structure['output_unit']
-            DataOutputUnitClass = getattr(import_module(self.data_unit_module), output_unit_structure['type'])
+            DataOutputUnitClass = getattr(import_module(self.data_output_unit_module), output_unit_structure['type'])
             parameters = output_unit_structure.copy()
             parameters.pop('type')
             output_unit = DataOutputUnitClass(**parameters)
+            print('Output unit: {}'.format(output_unit))
 
         task = DataExecutor(operation, input_unit=input_unit, output_unit=output_unit, **op_kwargs)
         task.execute()
