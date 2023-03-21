@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ds-box",
-    version='1.4.3',
+    version='1.4.4',
     author='Vincent Levorato',
     url='https://github.com/vlevorato/dsbox',
     description="Package made to accelerate data science workflows in production.",
