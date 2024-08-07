@@ -1,5 +1,4 @@
 import os
-import numpy as np
 from google.cloud import bigquery
 
 from dsbox.operators.data_unit import DataInputUnit, DataOutputUnit
@@ -61,7 +60,7 @@ class DataOutputBigQueryUnit(DataOutputUnit):
         if len(dataframe) > 0:
             str_cols = []
             for col in dataframe.columns:
-                if dataframe[col].dtype == np.object:
+                if dataframe[col].dtype == object:
                     print('col str type {}'.format(col))
                     str_cols.append(bigquery.SchemaField(col, "STRING"))
 

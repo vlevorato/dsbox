@@ -3,6 +3,7 @@ boto3>=1.9.195
 cython>=0.29.12
 gcsfs>=0.6.2
 gensim>=3.8.0
+numpy>=1.20.0
 pandas>=0.25
 pyarrow>=0.15.0
 scikit-learn>=0.23
