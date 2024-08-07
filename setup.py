@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ds-box",
-    version='1.4.4',
+    version='1.4.5',
     author='Vincent Levorato',
     url='https://github.com/vlevorato/dsbox',
     description="Package made to accelerate data science workflows in production.",
@@ -17,5 +17,5 @@ setuptools.setup(
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.5',
+    python_requires='>=3.8',
 )
